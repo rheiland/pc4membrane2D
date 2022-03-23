@@ -75,6 +75,8 @@ void add_spring_potentials(Cell* my_cell, Cell* other_agent)
 {
 	// basically check if the adjacent cell is of same type and connected to link
 	// if so, then put a repulsive force between these 2, for now use same repulsion co efficient 
+
+    // std::cout <<" ------ rwh: add_spring_potentials\n";
 	
 	static int nCellID = my_cell->custom_data.find_variable_index( "cell_ID" ); 
 	
@@ -191,12 +193,16 @@ void add_spring_potentials(Cell* my_cell, Cell* other_agent)
 	// }
 
 	// If the other agent is closer to membrane than current cell, then return
-	int pbmIndex = microenvironment.find_density_index("pbm");
-	int vi_myCell = microenvironment.nearest_voxel_index(my_cell->position);
-	int vi_otherCell = microenvironment.nearest_voxel_index(other_agent->position);
+//rwh	- comment out
+    // int pbmIndex = microenvironment.find_density_index("pbm");
+	// int vi_myCell = microenvironment.nearest_voxel_index(my_cell->position);
+	// int vi_otherCell = microenvironment.nearest_voxel_index(other_agent->position);
 
-	double signed_dist_myCell = microenvironment.density_vector(vi_myCell).at(pbmIndex);
-	double signed_dist_otherCell = microenvironment.density_vector(vi_otherCell).at(pbmIndex);
+	// double signed_dist_myCell = microenvironment.density_vector(vi_myCell).at(pbmIndex);
+	// double signed_dist_otherCell = microenvironment.density_vector(vi_otherCell).at(pbmIndex);
+
+	double signed_dist_myCell = my_cell->position[1];
+	double signed_dist_otherCell = other_agent->position[1];
 
 	if ((signed_dist_myCell > 0 ) || (signed_dist_otherCell > 0))
 	{
@@ -208,7 +214,7 @@ void add_spring_potentials(Cell* my_cell, Cell* other_agent)
 	// 	return;
 	// }
 
-	// std::cout << "reached the potential part for cell " << my_cell->ID ;
+	std::cout << "rwh---- reached the potential part for cell " << my_cell->ID ;
 	// std::cout << " curr sd = " << signed_dist_myCell << " " << "other sd = " << signed_dist_otherCell << std::endl;
 	// double distance = 0; 
 	// for( int i = 0 ; i < 3 ; i++ ) 
@@ -416,20 +422,6 @@ void heterotypic_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double
 
 void BM_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 {
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	return; 
 }
 
@@ -551,7 +543,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 		
         if (displacement <= 0.0 && displacement > -adhesion_radius )
         {
-            std::cout << "t="<<PhysiCell_globals.current_time << "attaching ID=" << pCell->ID << ": displacement= " << displacement <<", adhesion radius= " << adhesion_radius << std::endl;
+            std::cout << "t="<<PhysiCell_globals.current_time << " attaching ID=" << pCell->ID << ": displacement= " << displacement <<", adhesion radius= " << adhesion_radius << std::endl;
             // double p_BM = pv - d*nv
             pCell->custom_data[attach_to_BM_i] = 1.0;   // attached to BM now
             pCell->custom_data[attach_time_i] = 0.0;   // reset its time of being attached

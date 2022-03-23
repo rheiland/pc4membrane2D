@@ -213,6 +213,7 @@ class Vis(QWidget):
 
         self.substrates_checkbox = QCheckBox('Substrates')
         self.substrates_checkbox.setChecked(False)
+        self.substrates_checkbox.setEnabled(False)
         self.substrates_checkbox.clicked.connect(self.substrates_toggle_cb)
         self.substrates_checked_flag = False
         self.glayout1.addWidget(self.substrates_checkbox, 0,7,1,2) # w, row, column, rowspan, colspan
@@ -231,6 +232,7 @@ class Vis(QWidget):
         # label.setFixedWidth(label_width)
         label.setAlignment(QtCore.Qt.AlignCenter)
         self.cmin = QLineEdit()
+        self.cmin.setEnabled(False)
         self.cmin.setText('0.0')
         # self.cmin.textChanged.connect(self.change_plot_range)
         self.cmin.returnPressed.connect(self.cmin_cmax_cb)
@@ -245,6 +247,7 @@ class Vis(QWidget):
         # label.setFixedWidth(label_width)
         label.setAlignment(QtCore.Qt.AlignCenter)
         self.cmax = QLineEdit()
+        self.cmin.setEnabled(False)
         self.cmax.setText('1.0')
         self.cmax.returnPressed.connect(self.cmin_cmax_cb)
         self.cmax.setFixedWidth(cvalue_width)
@@ -867,8 +870,9 @@ class Vis(QWidget):
 
         # levels = MaxNLocator(nbins=self.num_contours).tick_values(self.cmin_value, self.cmax_value)
 
-        self.cbar = self.figure.colorbar(self.mysubstrate, ax=self.ax0)
-        self.cbar.ax.tick_params(labelsize=self.fontsize)
+#rwh - not for this demo
+        # self.cbar = self.figure.colorbar(self.mysubstrate, ax=self.ax0)
+        # self.cbar.ax.tick_params(labelsize=self.fontsize)
 
         # substrate_plot = self.ax0.contourf(xgrid, ygrid, M[self.field_index, :].reshape(self.numy,self.numx), num_contours, cmap='viridis')  # self.colormap_dd.value)
 
@@ -978,11 +982,11 @@ class Vis(QWidget):
         current_frame = frame
         fname = "snapshot%08d.svg" % frame
         full_fname = os.path.join(self.output_dir, fname)
-        try:
-            print("   ==>>>>> plot_svg(): full_fname=",full_fname)
-        except:
-            print("plot_svg(): ERROR:  full_name invalid")   
-            return
+        # try:
+        #     print("   ==>>>>> plot_svg(): full_fname=",full_fname)
+        # except:
+        #     print("plot_svg(): ERROR:  full_name invalid")   
+        #     return
         # with debug_view:
             # print("plot_svg:", full_fname) 
         # print("-- plot_svg:", full_fname) 
@@ -1347,9 +1351,11 @@ class Vis(QWidget):
             label = self.figure.axes[-1].get_ylabel()
             self.figure.axes[-1].remove()  # replace/update the colorbar
             cax = self.figure.add_axes([pts[0][0],pts[0][1],pts[1][0]-pts[0][0],pts[1][1]-pts[0][1]  ])
-            self.cbar = self.figure.colorbar(substrate_plot, cax=cax)
-            self.cbar.ax.set_ylabel(label)
-            self.cbar.ax.tick_params(labelsize=self.fontsize)
+            
+            #rwh
+            # self.cbar = self.figure.colorbar(substrate_plot, cax=cax)
+            # self.cbar.ax.set_ylabel(label)
+            # self.cbar.ax.tick_params(labelsize=self.fontsize)
 
             # unfortunately the aspect is different between the initial call to colorbar 
             #   without cax argument. Try to reset it (but still it's somehow different)
