@@ -972,12 +972,31 @@ class Vis(QWidget):
         # return collection
 
     #------------------------------------------------------------
+    def plot_arc(self):
+        circ_radius = 150.
+        xctr = 0.
+        yctr = 130.
+        xlist = []
+        ylist = []
+        for t in np.arange(3.14, 6.28, 0.05):
+            xlist.append(xctr + circ_radius*np.cos(t))
+            ylist.append(yctr + circ_radius*np.sin(t))
+        xvals = np.array(xlist)
+        yvals = np.array(ylist)
+
+        # self.circles(xvals,yvals, s=rvals)
+        self.circles(xvals,yvals, s=2)
+
+
+    #------------------------------------------------------------
     # def plot_svg(self, frame, rdel=''):
     def plot_svg(self, frame):
         # global current_idx, axes_max
         global current_frame
 
         # return
+
+        self.plot_arc()  # rwh: "membrane"
 
         current_frame = frame
         fname = "snapshot%08d.svg" % frame
