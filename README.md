@@ -1,6 +1,6 @@
-# studio_subcell_mechanics_2D
+# pc4membrane2D
 
-Studio GUI to explore test case of PhysiCell subcell mechanics  (using y=0 as the "membrane")
+Studio GUI to explore test case of PhysiCell subcell mechanics near a membrane
 
 Compile the C++ model:
 ```
