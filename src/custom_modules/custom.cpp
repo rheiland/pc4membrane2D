@@ -143,6 +143,7 @@ void create_cell_types( void )
 	// // pCD->functions.update_migration_bias = worker_cell_motility;
 	// pCD->phenotype.mechanics.attachment_elastic_constant = parameters.doubles( "elastic_const" );
 
+    cell_defaults.phenotype.motility.migration_bias_direction.assign({ 0.,-1., 0.} ); //rwh
 
 	return; 
 }

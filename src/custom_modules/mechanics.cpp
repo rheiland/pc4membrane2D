@@ -71,6 +71,20 @@ void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt 
 	return; 
 }
 
+double circle_dist(double ptx, double pty)
+{
+    static double cx = 0.0;
+    static double cy = 150.0;
+    static double crad = 150.0;
+
+    double dx = ptx - cx;
+    double dy = pty - cy;
+
+    double d = sqrt(dx*dx + dy*dy) - crad;
+
+    return d;
+}
+
 void add_spring_potentials(Cell* my_cell, Cell* other_agent)
 {
 	// basically check if the adjacent cell is of same type and connected to link
@@ -201,8 +215,12 @@ void add_spring_potentials(Cell* my_cell, Cell* other_agent)
 	// double signed_dist_myCell = microenvironment.density_vector(vi_myCell).at(pbmIndex);
 	// double signed_dist_otherCell = microenvironment.density_vector(vi_otherCell).at(pbmIndex);
 
-	double signed_dist_myCell = my_cell->position[1];
-	double signed_dist_otherCell = other_agent->position[1];
+//rwh: if y=0 membrane
+	// double signed_dist_myCell = my_cell->position[1];
+	// double signed_dist_otherCell = other_agent->position[1];
+
+	double signed_dist_myCell = circle_dist(my_cell->position[0],my_cell->position[1]);
+	double signed_dist_otherCell = circle_dist(other_agent->position[0],other_agent->position[1]);
 
 	if ((signed_dist_myCell > 0 ) || (signed_dist_otherCell > 0))
 	{
@@ -214,7 +232,7 @@ void add_spring_potentials(Cell* my_cell, Cell* other_agent)
 	// 	return;
 	// }
 
-	std::cout << "rwh---- reached the potential part for cell " << my_cell->ID ;
+	// std::cout << "rwh---- reached the potential part for cell " << my_cell->ID ;
 	// std::cout << " curr sd = " << signed_dist_myCell << " " << "other sd = " << signed_dist_otherCell << std::endl;
 	// double distance = 0; 
 	// for( int i = 0 ; i < 3 ; i++ ) 
