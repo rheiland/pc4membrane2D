@@ -973,9 +973,11 @@ class Vis(QWidget):
 
     #------------------------------------------------------------
     def plot_arc(self):
-        circ_radius = 150.
+        # circ_radius = 150.
+        circ_radius = 100.
         xctr = 0.
-        yctr = 130.
+        # yctr = 130.
+        yctr = 0.
         xlist = []
         ylist = []
         for t in np.arange(3.14, 6.28, 0.05):
@@ -985,7 +987,8 @@ class Vis(QWidget):
         yvals = np.array(ylist)
 
         # self.circles(xvals,yvals, s=rvals)
-        self.circles(xvals,yvals, s=2)
+        self.circles(xvals,yvals, s=1,color='black')
+        # self.circles(xvals,yvals, s=rvals, color=rgbas, edgecolor='black', linewidth=0.5)
 
 
     #------------------------------------------------------------
