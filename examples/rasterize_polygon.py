@@ -35,10 +35,12 @@ from collections import deque
 from operator import add
 
 
-# print("# args=",len(sys.argv)-1)
+print("# args=",len(sys.argv)-1)
 # fname = "rwh1b.svg"
-# fname = sys.argv[1]
-
+lsegs_file = sys.argv[1]
+#cells_out_file = "test_cells.csv"
+cells_out_file = sys.argv[2]
+cell_id = int(sys.argv[3])
 
 #-----------------------------------------------------
 def circles(x, y, s, c='b', vmin=None, vmax=None, **kwargs):
@@ -132,7 +134,7 @@ xoff = -300
 yoff = 250
 scale_factor = 5.0
 
-plot_pieces_flag = True
+plot_pieces_flag = False
 
 def perp( a ):
     b = np.empty_like(a)
@@ -197,8 +199,8 @@ my_data_name = ''
 # from https://github.com/PhysiCell-Models/Kidney_FTU/blob/main/PhysiCell/config/mymodel.xml 
     #   <cell_definition name="mesangial_matrix" ID="12">
 
-lsegs_file = "test_poly2.csv"
-lsegs_file = "test_poly1.csv"
+# lsegs_file = "test_poly2.csv"
+# lsegs_file = "test_poly1.csv"
 # lsegs_file = "glom_cells_lsegs.csv"  # read this  (optionally write glom_cells.csv)
 # filep = open(lsegs_file, 'r')
 
@@ -239,7 +241,7 @@ y_idx = 0
 for yval in np.arange(y_min,y_max, y_spacing):
     xvals = []
     y_idx += 1
-    print("--- yval = ",yval)
+    # print("--- yval = ",yval)
     hline0[1] = yval
     hline1[1] = yval
 # xstart = cell_data[:,0]
@@ -263,7 +265,7 @@ for yval in np.arange(y_min,y_max, y_spacing):
         # print("------------ xmin,xmax = ",xmin,xmax)
         # if ptint[0] >= xmin and ptint[0] <= xmax:
         if ptint[0] >= xmin and ptint[0] <= xmax and ptint[1] >= ymin and ptint[1] <= ymax:
-            print("------------ ptint = ",ptint)
+            # print("------------ ptint = ",ptint)
             # print("------------ xmin,xmax = ",xmin,xmax)
             xvals.append(ptint[0])
         # elif ptint[1] >= ymin and ptint[1] <= ymax:
@@ -280,10 +282,10 @@ for yval in np.arange(y_min,y_max, y_spacing):
     # print()
 
     xvals.sort()
-    print("(sorted) xvals = ",end='')
-    for kdx in range(len(xvals)):
-        print(xvals[kdx],',',end='')
-    print()
+    # print("(sorted) xvals = ",end='')
+    # for kdx in range(len(xvals)):
+        # print(xvals[kdx],',',end='')
+    # print()
 
     if len(xvals) == 1:
         pass
@@ -314,16 +316,17 @@ if subcells_flag:
     # print(" ----------->>>>>>>>>>>  mycolor = ",mycolor)
     circles(cells_x,cells_y, s=cell_radius, c='b', ec='black', linewidth=0.1)
 
+# cell_id = 1
 if create_csv_flag:
-    cells_file = "test_cells.csv"
-    filep = open(cells_file, 'w')
+    # cells_out_file = "test_cells.csv"
+    filep = open(cells_out_file, 'w')
     # matrix_cell_type = 12   # <cell_definition name="mesangial_matrix" ID="12">
     # matrix_cell_type = 8      # <cell_definition name="glomerular_mesangial" ID="8">
     cell_type = 0
     for ipt in range(len(cells_x)):
-        filep.write(f"{cells_x[ipt]},{cells_y[ipt]}, 0.0, {cell_type}, {0}\n")
+        filep.write(f"{cells_x[ipt]},{cells_y[ipt]}, 0.0, {cell_type}, {cell_id}\n")
     filep.close()
-    print("\n-------> ",cells_file)
+    print("\n-------> ",cells_out_file)
 
 #--------------------------
 
