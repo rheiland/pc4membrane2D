@@ -974,13 +974,13 @@ class Vis(QWidget):
     #------------------------------------------------------------
     def plot_arc(self):
         # circ_radius = 150.
-        circ_radius = 100.
+        circ_radius = 300.
         xctr = 0.
         # yctr = 130.
-        yctr = 0.
+        yctr = 200.
         xlist = []
         ylist = []
-        for t in np.arange(3.14, 6.28, 0.05):
+        for t in np.arange(3.14, 6.28, 0.02):
             xlist.append(xctr + circ_radius*np.cos(t))
             ylist.append(yctr + circ_radius*np.sin(t))
         xvals = np.array(xlist)

@@ -181,12 +181,15 @@ debug_print = False
 
 bbox_xmin = -100
 bbox_xmax = 100
+bbox_xmin = -300
+bbox_xmax = 300
 
 y_min = -200
 y_min = 240
 y_min = 200
 y_min = 150
 y_min = -190
+y_min = -300
 y_max = y_min + y_spacing
 
 # In [3]: yend.min()  # -231.5

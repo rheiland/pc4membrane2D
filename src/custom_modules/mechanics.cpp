@@ -76,9 +76,10 @@ double circle_dist(double ptx, double pty)
 {
     static double cx = 0.0;
     // static double cy = 130.0;
-    static double cy = 0.0;
+    static double cy = 200.0;
     // static double crad = 150.0;
-    static double crad = 100.0;
+    // static double crad = 100.0;
+    static double crad = 300.0;
 
     double dx = ptx - cx;
     double dy = pty - cy;

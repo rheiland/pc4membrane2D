@@ -104,6 +104,8 @@ class PhysiCellXMLCreator(QWidget):
         print("-------- dataDirectory (relative) =",dataDirectory)
         self.absolute_data_dir = os.path.abspath(dataDirectory)
         print("-------- absolute_data_dir =",self.absolute_data_dir)
+
+        # NOTE: we set an env var here so in custom.cpp, it will also use it to read data (e.g., .csv)
         os.environ['KIDNEY_DATA_PATH'] = self.absolute_data_dir
         # dataDirectory = os.path.join(binDirectory,'..','config')
         # dataDirectory = os.path.join('.','config')
