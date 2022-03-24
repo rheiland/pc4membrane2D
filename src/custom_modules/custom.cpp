@@ -261,7 +261,8 @@ bool load_subcells_from_pugixml( pugi::xml_node root )
     // rwh: WARNING - this will likely break when not running from the GUI (where env var is set)
     const char* env_p = std::getenv("KIDNEY_DATA_PATH");
     std::cout << "custom.cpp: load_subcells_from_pugixml():   KIDNEY_DATA_PATH: "<<env_p<< std::endl;
-	std::string input_filename = env_p + filename; 
+	std::string input_filename = env_p;
+	input_filename += "/" + filename; 
     std::cout << "custom.cpp: load_subcells_from_pugixml():   input_filename: "<<input_filename<< std::endl;
 
 	std::string filetype = node.attribute("type").value() ; 
