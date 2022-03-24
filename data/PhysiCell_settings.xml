@@ -259,10 +259,8 @@
 		</cell_definition>
 	</cell_definitions>
 	<initial_conditions>
-		<cell_positions
-			enabled="true"
-			type="csv">
-			<folder>../data</folder>
+		<cell_positions enabled="true" type="csv">
+			<folder>data</folder>
 			<filename>cells.csv</filename>
 		</cell_positions>
 	</initial_conditions>
