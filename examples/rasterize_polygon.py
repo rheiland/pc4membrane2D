@@ -1,4 +1,4 @@
-#
+#  python rasterize_polygon.py test_poly1.csv cells1.csv 2
 #
 # Author: Randy Heiland
 #
@@ -161,10 +161,10 @@ def seg_intersect(a1,a2, b1,b2):
 
 #-------------------
 # cell_radius = 8.412710547954228  # PhysiCell default
-cell_radius = 1.  # ~2 micron spacing
 cell_radius = 5 # 
 cell_radius = 4 # 
 cell_radius = 2.5 # ~5 micron spacing of subcells
+cell_radius = 1.5  # ~2 micron spacing
 cell_diam = cell_radius*2
 delta = cell_radius*1.5
 delta = 0.0
