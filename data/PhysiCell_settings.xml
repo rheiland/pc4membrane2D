@@ -1,15 +1,15 @@
 <PhysiCell_settings
 	version="devel-version">
 	<domain>
-		<x_min>-150</x_min>
-		<x_max>150</x_max>
-		<y_min>-50</y_min>
-		<y_max>50</y_max>
-		<z_min>-5</z_min>
-		<z_max>5</z_max>
-		<dx>1</dx>
-		<dy>1</dy>
-		<dz>1</dz>
+		<x_min>-200</x_min>
+		<x_max>200</x_max>
+		<y_min>-200</y_min>
+		<y_max>200</y_max>
+		<z_min>-10</z_min>
+		<z_max>10</z_max>
+		<dx>20</dx>
+		<dy>20</dy>
+		<dz>20</dz>
 		<use_2D>true</use_2D>
 	</domain>
 	<overall>
@@ -18,7 +18,7 @@
 		<time_units>min</time_units>
 		<space_units>micron</space_units>
 		<dt_diffusion
-			units="min">0000.01</dt_diffusion>
+			units="min">0.01</dt_diffusion>
 		<dt_mechanics
 			units="min">0.1</dt_mechanics>
 		<dt_phenotype
