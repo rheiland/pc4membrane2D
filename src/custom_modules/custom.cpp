@@ -134,7 +134,8 @@ void create_cell_types( void )
 	
 
 	// Cell_Definition* pCD = find_cell_definition( "mesangial_matrix_subcell" ); 
-	Cell_Definition* pCD = find_cell_definition( "parietal_basement_membrane_subcell" ); 
+	// Cell_Definition* pCD = find_cell_definition( "parietal_basement_membrane_subcell" ); 
+	Cell_Definition* pCD = find_cell_definition( "epithelial" ); 
 	// pCD->functions.update_phenotype = pheno_update; 
 	// // pCD->functions.custom_cell_rule = NULL; // extra_elastic_attachment_mechanics;  // pre-1.8.0
 	// pCD->functions.custom_cell_rule = custom_cell_update;   // dt_mechanics
@@ -186,22 +187,22 @@ void setup_tissue( void )
 	
 	Cell* pC;
 	
-	for( int k=0; k < cell_definitions_by_index.size() ; k++ )
-	{
-		Cell_Definition* pCD = cell_definitions_by_index[k]; 
-		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
-		for( int n = 0 ; n < parameters.ints("number_of_cells") ; n++ )
-		{
-			std::vector<double> position = {0,0,0}; 
-			position[0] = Xmin + UniformRandom()*Xrange; 
-			position[1] = Ymin + UniformRandom()*Yrange; 
-			position[2] = Zmin + UniformRandom()*Zrange; 
+	// for( int k=0; k < cell_definitions_by_index.size() ; k++ )
+	// {
+	// 	Cell_Definition* pCD = cell_definitions_by_index[k]; 
+	// 	std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
+	// 	for( int n = 0 ; n < parameters.ints("number_of_cells") ; n++ )
+	// 	{
+	// 		std::vector<double> position = {0,0,0}; 
+	// 		position[0] = Xmin + UniformRandom()*Xrange; 
+	// 		position[1] = Ymin + UniformRandom()*Yrange; 
+	// 		position[2] = Zmin + UniformRandom()*Zrange; 
 			
-			pC = create_cell( *pCD ); 
-			pC->assign_position( position );
-		}
-	}
-	std::cout << std::endl; 
+	// 		pC = create_cell( *pCD ); 
+	// 		pC->assign_position( position );
+	// 	}
+	// }
+	// std::cout << std::endl; 
 	
 	// load cells from your CSV file (if enabled)
 	load_subcells_from_pugixml(); 	

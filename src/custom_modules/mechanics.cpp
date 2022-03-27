@@ -74,19 +74,28 @@ void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt 
 // rwh
 double circle_dist(double ptx, double pty)
 {
-    static double cx = 0.0;
-    // static double cy = 130.0;
-    static double cy = 200.0;
-    // static double crad = 150.0;
-    // static double crad = 100.0;
-    static double crad = 300.0;
+    static double circle_ctr_x = 0.0;
+    static double circle_ctr_y = 200.0;
+    static double circle_radius = 300.0;
 
-    double dx = ptx - cx;
-    double dy = pty - cy;
+    double dx = ptx - circle_ctr_x;
+    double dy = pty - circle_ctr_y;
 
-    double d = sqrt(dx*dx + dy*dy) - crad;
+    double d = sqrt(dx*dx + dy*dy) - circle_radius;
 
     return d;
+}
+void direction_to_arc(double ptx, double pty, double &dx, double &dy)
+{
+    static double circle_ctr_x = 0.0;
+    static double circle_ctr_y = 200.0;
+    static double circle_radius = 300.0;
+
+    dx = ptx - circle_ctr_x;
+    dy = pty - circle_ctr_y;
+
+    // double d = sqrt(dx*dx + dy*dy) - circle_radius;
+    // return d;
 }
 
 void add_spring_potentials(Cell* my_cell, Cell* other_agent)
@@ -451,7 +460,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 {
 	static int nRP = 0; // "rest_position"
 	
-	// displacement 
+	// displacement  (rwh: displacment?)
 	std::vector<double> disp = pCell->custom_data.vector_variables[nRP].value - pCell->position; 
 	
 	static int nEConst = pCell->custom_data.find_variable_index( "cell_elasticity" );
@@ -515,7 +524,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 	// double displacement = 0.0 - pCell->position[1];  // displacement: just (negative) y (height) for test case
 
 	// double displacement = signed_dist;
-	double displacement = -1;
+	double displacement = -1;  // rwh: displacment?
 
 	// displacement = std::sqrt((pCell->position[0]- nx) * (pCell->position[0]- nx) + (pCell->position[1]- ny) * (pCell->position[1]- ny));
 
@@ -536,7 +545,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 
 	if  (pCell->custom_data[attach_to_BM_i] == 1.0 )
 	{
-		if (displacement < 0) 
+		if (displacement < 0)    // rwh: displacment?
 		{	
 			temp_r = displacement * 0.001; // d
 			temp_r /= adhesion_radius; // d/R
