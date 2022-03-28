@@ -81,21 +81,7 @@ class PhysiCellXMLCreator(QWidget):
         self.setMinimumSize(750, 770)  # width, height (height >= Cell Types|Death params)
         # self.setMinimumSize(1200, 770)  # width, height (height >= Cell Types|Death params)
 
-        # self.menubar = QtWidgets.QMenuBar(self)
-        # self.file_menu = QtWidgets.QMenu('File')
-        # self.file_menu.insertAction("Open")
-        # self.menubar.addMenu(self.file_menu)
-
-        # GUI tabs
-
-        # By default, let's startup the app with a default of template2D (a copy)
-        # self.new_model_cb()  # default on startup
-        # read_file = "../data/subcellular_flat.xml"
-
-        # model_name = "biorobots_flat"
         model_name = "PhysiCell_settings"
-        # model_name = "mechanics_flat"
-        # read_file = "data/" + model_name + ".xml"
 
         # then what??
         # binDirectory = os.path.realpath(os.path.abspath(__file__))
@@ -256,112 +242,16 @@ class PhysiCellXMLCreator(QWidget):
         menubar.setNativeMenuBar(False)
 
         #--------------
-        # file_menu = menubar.addMenu('&Model')
+        file_menu = menubar.addMenu('&File')
 
-        # # open_act = QtGui.QAction('Open', self, checkable=True)
-        # # open_act = QtGui.QAction('Open', self)
-        # # open_act.triggered.connect(self.open_as_cb)
-        # # file_menu.addAction("New (template)", self.new_model_cb, QtGui.QKeySequence('Ctrl+n'))
-        # file_menu.addAction("biorobots", self.biorobots_cb)
-        # file_menu.addAction("celltypes3", self.celltypes3_cb)
-        # file_menu.addAction("pred_prey_farmer", self.pred_prey_cb)
-        # file_menu.addAction("Save as mymodel.xml", self.save_as_cb)
-
-        # view_menu = menubar.addMenu('&View')
-        # view_menu.addAction("Show/Hide plot range", self.view_plot_range_cb)
-
-        #--------------
-        # samples_menu = file_menu.addMenu("Samples (copy of)")
-        # # biorobots_act = QtGui.QAction('biorobots', self)
-        # biorobots_act = QAction('biorobots', self)
-        # samples_menu.addAction(biorobots_act)
-        # biorobots_act.triggered.connect(self.biorobots_cb)
-
-
-        #--------------
-        # file_menu.addAction(open_act)
-        # file_menu.addAction(recent_act)
-        # file_menu.addAction(save_act)
-        # file_menu.addAction(save_act, self.save_act, QtGui.QKeySequence("Ctrl+s"))
-        # file_menu.addAction(saveas_act)
-
-
-        #--------------
-        # self.models_menu = menubar.addMenu('&Models')
-        # models_menu_act = QAction('-----', self)
-        # self.models_menu.addAction(models_menu_act)
-        # models_menu_act.triggered.connect(self.select_current_model_cb)
-        # # self.models_menu.addAction('Load sample', self.select_current_model_cb)
-
-        #--------------
-        # tools_menu = menubar.addMenu('&Tools')
-        # validate_act = QAction('Validate', self)
-        # tools_menu.addAction(validate_act)
-        # validate_act.triggered.connect(self.validate_cb)
+        file_menu.addAction("Reset", self.reset_xml_root)
+        # file_menu.addAction("Download config.xml", self.download_config_cb)
 
         menubar.adjustSize()  # Argh. Otherwise, only 1st menu appears, with ">>" to others!
 
     #-----------------------------------------------------------------
-    def add_new_model(self, name, read_only):
-        # does it already exist? If so, return
-        # if name in self.model.keys():
-        #     return
-        # self.model[name] = read_only
-        # self.num_models += 1
-        # print("add_new_model(): self.model (dict)= ",self.model)
-
-        # models_menu_act = QAction(name, self)
-        # self.models_menu.addAction(models_menu_act)
-        # models_menu_act.triggered.connect(self.select_current_model_cb)
-
-        print("add_new_model: title suffix= ",name)
-        self.setWindowTitle(self.title_prefix + name)
-
-        #---------- rwh?
-        print("\n\n ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        # print("add_new_model(): self.tree = ET.parse(xml_file) for ",self.config_file)
-        print("add_new_model(): self.tree = ET.parse(xml_file) for ",name)
-        # with open(self.config_file, 'r') as xml_file:
-        with open(name, 'r') as xml_file:
-            self.tree = ET.parse(xml_file)
-        # tree = ET.parse(read_file)
-        # self.tree = ET.parse(read_file)
-        self.xml_root = self.tree.getroot()
-
-        # self.num_models = 0
-        # self.model = {}  # key: name, value:[read-only, tree]
-
-        #-------  Re-populate the GUI with the new model's params -------
-        # self.config_tab = Config(self.nanohub_flag)
-        self.config_tab.xml_root = self.xml_root
-        self.config_tab.fill_gui()
-
-        # self.microenv_tab = SubstrateDef()
-        self.microenv_tab.xml_root = self.xml_root
-        substrate_name = self.microenv_tab.first_substrate_name()
-        print("studio.py: substrate_name=",substrate_name)
-        self.microenv_tab.populate_tree()  # rwh: both fill_gui and populate_tree??
-
-        # self.tab2.tree.setCurrentItem(QTreeWidgetItem,0)  # item
-
-        # self.celldef_tab = CellDef()
-        self.celldef_tab.xml_root = self.xml_root
-        cd_name = self.celldef_tab.first_cell_def_name()
-        print("studio.py: cd_name=",cd_name)
-        self.celldef_tab.populate_tree()
-        self.celldef_tab.fill_substrates_comboboxes()
-        # self.vis_tab.substrates_cbox_changed_cb(2)
-        self.microenv_tab.celldef_tab = self.celldef_tab
-
-        # self.cell_customdata_tab = CellCustomData()
-        # self.cell_customdata_tab.xml_root = self.xml_root
-        # self.cell_customdata_tab.celldef_tab = self.celldef_tab
-        # self.cell_customdata_tab.fill_gui(self.celldef_tab)
-        # self.celldef_tab.fill_custom_data_tab()
-        
-        # self.user_params_tab = UserParams()
-        self.user_params_tab.xml_root = self.xml_root
-        self.user_params_tab.fill_gui()
+    def download_config_cb(self):
+        return
 
 
     def reset_xml_root(self):
@@ -370,45 +260,29 @@ class PhysiCellXMLCreator(QWidget):
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print("reset_xml_root(): after celldef_tab.param_d.clear(), param_d = ", self.celldef_tab.param_d)
         self.celldef_tab.current_cell_def = None
-        # self.microenv_tab.param_d.clear()
 
         self.xml_root = self.tree.getroot()
         self.config_tab.xml_root = self.xml_root
         self.microenv_tab.xml_root = self.xml_root
         self.celldef_tab.xml_root = self.xml_root
-        # self.cell_customdata_tab.xml_root = self.xml_root
         self.user_params_tab.xml_root = self.xml_root
-        # self.run_tab.xml_root = self.xml_root
 
         # --------Now fill all tabs' params------
         self.config_tab.fill_gui()
 
         self.microenv_tab.clear_gui()
         self.microenv_tab.populate_tree()
-        # self.microenv_tab.fill_gui(None)
-        # self.microenv_tab.fill_gui()
 
-        # Do this before the celldef_tab
-        # self.cell_customdata_tab.clear_gui(self.celldef_tab)
-        # self.cell_customdata_tab.fill_gui(self.celldef_tab)
-
-        # self.celldef_tab.clear_gui()
         self.celldef_tab.clear_custom_data_params()
         self.celldef_tab.populate_tree()
-        # self.celldef_tab.fill_gui(None)
-        # self.celldef_tab.customize_cycle_choices() #rwh/todo: needed? 
         self.celldef_tab.fill_substrates_comboboxes()
         self.microenv_tab.celldef_tab = self.celldef_tab
-
-        # self.cell_customdata_tab.clear_gui(self.celldef_tab)
-        # self.cell_customdata_tab.fill_gui(self.celldef_tab)
 
         self.user_params_tab.clear_gui()
         self.user_params_tab.fill_gui()
 
         self.vis_tab.init_plot_range(self.config_tab)
         self.vis_tab.reset_model()
-        # self.vis_tab.setEnabled(False)
         self.enablePlotTab(False)
         self.tabWidget.setCurrentIndex(0)  # Config (default)
 
@@ -479,19 +353,6 @@ class PhysiCellXMLCreator(QWidget):
         # out_file = self.config_file
         # out_file = "mymodel.xml"
         print("studio.py:  save_cb: writing to: ",self.config_file)
-
-        # self.tree.write(self.config_file)
-        # root = ET.fromstring("<fruits><fruit>banana</fruit><fruit>apple</fruit></fruits>""")
-        # tree = ET.ElementTree(root)
-        # ET.indent(self.tree)  # ugh, only in 3.9
-        # root = ET.tostring(self.tree)
-        # self.indent(self.tree)
-        # self.indent(root)
-
-        # rwh: ARGH, doesn't work
-        # root = self.tree.getroot()
-        # out_str = self.prettify(root)
-        # print(out_str)
 
         # self.tree.write(outfile)
         self.tree.write(self.config_file)  # does this close the file??
