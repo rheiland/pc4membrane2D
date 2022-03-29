@@ -234,7 +234,6 @@
 				</secretion>
 			</phenotype>
 			<custom_data>
-				<renin>0</renin>
 				<cell_elasticity>0.000</cell_elasticity>
 				<cell_plasticity>0.0000</cell_plasticity>
 				<cell_ID>0.0</cell_ID>

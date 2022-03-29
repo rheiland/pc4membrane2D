@@ -129,6 +129,7 @@ class PhysiCellXMLCreator(QWidget):
         # tree = ET.parse(read_file)
         # self.tree = ET.parse(read_file)
         self.xml_root = self.tree.getroot()
+        self.xml_root_orig = self.xml_root
 
         # self.template_cb()
 
@@ -255,11 +256,14 @@ class PhysiCellXMLCreator(QWidget):
 
 
     def reset_xml_root(self):
+        self.xml_root = self.xml_root_orig
+
         self.celldef_tab.param_d.clear()  # seems unnecessary as being done in populate_tree. argh.
         self.celldef_tab.clear_custom_data_tab()
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         print("reset_xml_root(): after celldef_tab.param_d.clear(), param_d = ", self.celldef_tab.param_d)
         self.celldef_tab.current_cell_def = None
+        # self.celldef_tab.current_cell_def = self.celldef_tab.tree.currentItem().text(0)
 
         self.xml_root = self.tree.getroot()
         self.config_tab.xml_root = self.xml_root
@@ -274,6 +278,7 @@ class PhysiCellXMLCreator(QWidget):
         self.microenv_tab.populate_tree()
 
         self.celldef_tab.clear_custom_data_params()
+        # self.celldef_tab.update_custom_data_params()
         self.celldef_tab.populate_tree()
         self.celldef_tab.fill_substrates_comboboxes()
         self.microenv_tab.celldef_tab = self.celldef_tab

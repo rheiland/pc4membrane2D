@@ -202,7 +202,7 @@ class RunModel(QWidget):
             # self.vis_tab.setEnabled(True)
             # self.pStudio.enablePlotTab(True)
             # self.tab_widget.enablePlotTab(True)
-            self.tab_widget.setTabEnabled(5, True)
+            self.tab_widget.setTabEnabled(5, True)   # enable (allow to be selected) the Vis tab
             self.message("Executing process")
             self.p = QProcess()  # Keep a reference to the QProcess (e.g. on self) while it's running.
             self.p.readyReadStandardOutput.connect(self.handle_stdout)
@@ -249,4 +249,5 @@ class RunModel(QWidget):
     def process_finished(self):
         self.message("Process finished.")
         print("-- process finished.")
+        self.vis_tab.first_plot_cb("foo")
         self.p = None
