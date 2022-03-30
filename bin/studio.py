@@ -98,13 +98,13 @@ class PhysiCellXMLCreator(QWidget):
 
         # read_file = model_name + ".xml"
         # read_file = os.path.join(dataDirectory, model_name + ".xml")
-        read_file = os.path.join(self.absolute_data_dir, model_name + ".xml")
+        self.read_file = os.path.join(self.absolute_data_dir, model_name + ".xml")
         # self.setWindowTitle(self.title_prefix + model_name)
 
 
-        # NOTE! We create a *copy* of the .xml sample model and will save to it.
+        # Create a *copy* of the .xml sample model, but not necessary really. 
         copy_file = "copy_" + model_name + ".xml"
-        shutil.copy(read_file, copy_file)
+        shutil.copy(self.read_file, copy_file)
         if self.nanohub_flag:
             # self.setWindowTitle(self.title_prefix + "pc4learning")
             self.setWindowTitle(self.title_prefix + copy_file)
@@ -129,7 +129,6 @@ class PhysiCellXMLCreator(QWidget):
         # tree = ET.parse(read_file)
         # self.tree = ET.parse(read_file)
         self.xml_root = self.tree.getroot()
-        self.xml_root_orig = self.xml_root
 
         # self.template_cb()
 
@@ -256,7 +255,8 @@ class PhysiCellXMLCreator(QWidget):
 
 
     def reset_xml_root(self):
-        self.xml_root = self.xml_root_orig
+        with open(self.read_file, 'r') as xml_file:
+            self.tree = ET.parse(xml_file)
 
         self.celldef_tab.param_d.clear()  # seems unnecessary as being done in populate_tree. argh.
         self.celldef_tab.clear_custom_data_tab()
@@ -292,18 +292,18 @@ class PhysiCellXMLCreator(QWidget):
         self.tabWidget.setCurrentIndex(0)  # Config (default)
 
 
-    def show_sample_model(self):
-        print("studio.py: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~show_sample_model(): self.config_file = ", self.config_file)
-        # self.config_file = "config_samples/biorobots.xml"
-        self.tree = ET.parse(self.config_file)
-        self.run_tab.tree = self.tree
-        # self.xml_root = self.tree.getroot()
-        self.reset_xml_root()
-        self.setWindowTitle(self.title_prefix + self.config_file)
-        # self.config_tab.fill_gui(self.xml_root)  # 
-        # self.microenv_tab.fill_gui(self.xml_root)  # microenv
-        # self.celldef_tab.fill_gui("foobar")  # cell defs
-        # self.celldef_tab.fill_motility_substrates()
+    # def show_sample_model(self):
+    #     print("studio.py: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~show_sample_model(): self.config_file = ", self.config_file)
+    #     # self.config_file = "config_samples/biorobots.xml"
+    #     self.tree = ET.parse(self.config_file)
+    #     self.run_tab.tree = self.tree
+    #     # self.xml_root = self.tree.getroot()
+    #     self.reset_xml_root()
+    #     self.setWindowTitle(self.title_prefix + self.config_file)
+    #     # self.config_tab.fill_gui(self.xml_root)  # 
+    #     # self.microenv_tab.fill_gui(self.xml_root)  # microenv
+    #     # self.celldef_tab.fill_gui("foobar")  # cell defs
+    #     # self.celldef_tab.fill_motility_substrates()
 
     def save_as_cb(self):
         # save_as_file = QFileDialog.getSaveFileName(self,'',".")
