@@ -23,11 +23,12 @@ class QHLine(QFrame):
         self.setFrameShadow(QFrame.Sunken)
 
 class RunModel(QWidget):
-    def __init__(self, nanohub_flag, tab_widget):
+    def __init__(self, nanohub_flag, tab_widget, download_menu):
         super().__init__()
 
         self.nanohub_flag = nanohub_flag
         self.tab_widget = tab_widget
+        self.download_menu = download_menu
 
         #-------------------------------------------
         # used with nanoHUB app
@@ -118,6 +119,7 @@ class RunModel(QWidget):
 #------------------------------
     def update_xml_from_gui(self):
         self.xml_root = self.tree.getroot()
+        print("\n\n =================================== run_tab.py: update_xml_from_gui(): self.xml_root = ",self.xml_root)
         self.config_tab.xml_root = self.xml_root
         self.microenv_tab.xml_root = self.xml_root
         self.celldef_tab.xml_root = self.xml_root
@@ -250,4 +252,5 @@ class RunModel(QWidget):
         self.message("Process finished.")
         print("-- process finished.")
         self.vis_tab.first_plot_cb("foo")
+        self.download_menu.setEnabled(True)
         self.p = None

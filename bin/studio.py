@@ -13,6 +13,8 @@ import os
 import sys
 import getopt
 import shutil
+import glob
+import zipfile
 from pathlib import Path
 import xml.etree.ElementTree as ET  # https://docs.python.org/2/library/xml.etree.elementtree.html
 from xml.dom import minidom
@@ -177,7 +179,7 @@ class PhysiCellXMLCreator(QWidget):
 
         self.tabWidget = QTabWidget()
 
-        self.run_tab = RunModel(self.nanohub_flag, self.tabWidget)
+        self.run_tab = RunModel(self.nanohub_flag, self.tabWidget, self.download_menu)
         self.homedir = os.getcwd()
         print("studio.py: self.homedir = ",self.homedir)
         self.run_tab.homedir = self.homedir
@@ -247,7 +249,13 @@ class PhysiCellXMLCreator(QWidget):
         file_menu = menubar.addMenu('&File')
 
         file_menu.addAction("Reset", self.reset_xml_root)
-        file_menu.addAction("Download config.xml", self.download_config_cb)
+
+        self.download_menu = file_menu.addMenu('Download')
+        self.download_config_item = self.download_menu.addAction("Download config.xml", self.download_config_cb)
+        self.download_svg_item = self.download_menu.addAction("Download SVG", self.download_svg_cb)
+        self.download_svg_item = self.download_menu.addAction("Download full (.mat) data", self.download_full_cb)
+        # self.download_menu_item.setEnabled(False)
+        self.download_menu.setEnabled(False)
 
         menubar.adjustSize()  # Argh. Otherwise, only 1st menu appears, with ">>" to others!
 
@@ -283,16 +291,54 @@ class PhysiCellXMLCreator(QWidget):
     def download_config_cb(self):
         if self.nanohub_flag:
             if self.p is None:  # No process running.
-                # self.tab_widget.setTabEnabled(5, True)   # enable (allow to be selected) the Vis tab
-                # self.message("Executing process")
-                self.p = QProcess()  # Keep a reference to the QProcess (e.g. on self) while it's running.
+                self.p = QProcess()
                 self.p.readyReadStandardOutput.connect(self.handle_stdout)
                 self.p.readyReadStandardError.connect(self.handle_stderr)
                 self.p.stateChanged.connect(self.handle_state)
                 self.p.finished.connect(self.process_finished)  # Clean up once complete.
-                # self.p.start("exportfile",["--local",exec_str,xml_str])
-                # Should test to make sure tmpdir/config.xml exists; recall we should be *in* /tmpdir
+
                 self.p.start("exportfile config.xml")
+        return
+
+    def download_svg_cb(self):
+        # if self.nanohub_flag:
+        if True:
+            if self.p is None:  # No process running.
+                self.p = QProcess()
+                self.p.readyReadStandardOutput.connect(self.handle_stdout)
+                self.p.readyReadStandardError.connect(self.handle_stderr)
+                self.p.stateChanged.connect(self.handle_state)
+                self.p.finished.connect(self.process_finished)  # Clean up once complete.
+
+                # file_str = os.path.join(self.output_dir, '*.svg')
+                file_str = "*.svg"
+                print('-------- download_svg_cb(): zip up all ',file_str)
+                with zipfile.ZipFile('svg.zip', 'w') as myzip:
+                    for f in glob.glob(file_str):
+                        myzip.write(f, os.path.basename(f))   # 2nd arg avoids full filename 
+                self.p.start("exportfile svg.zip")
+        return
+
+    def download_full_cb(self):
+        if self.nanohub_flag:
+            if self.p is None:  # No process running.
+                self.p = QProcess()
+                self.p.readyReadStandardOutput.connect(self.handle_stdout)
+                self.p.readyReadStandardError.connect(self.handle_stderr)
+                self.p.stateChanged.connect(self.handle_state)
+                self.p.finished.connect(self.process_finished)  # Clean up once complete.
+
+                # file_xml = os.path.join(self.output_dir, '*.xml')
+                # file_mat = os.path.join(self.output_dir, '*.mat')
+                file_xml = '*.xml'
+                file_mat = '*.mat'
+                print('-------- download_full_cb(): zip up all .xml and .mat')
+                with zipfile.ZipFile('mcds.zip', 'w') as myzip:
+                    for f in glob.glob(file_xml):
+                        myzip.write(f, os.path.basename(f)) # 2nd arg avoids full filename path in the archive
+                    for f in glob.glob(file_mat):
+                        myzip.write(f, os.path.basename(f))
+                self.p.start("exportfile mcds.zip")
         return
 
 
@@ -332,6 +378,8 @@ class PhysiCellXMLCreator(QWidget):
         self.vis_tab.reset_model()
         self.enablePlotTab(False)
         self.tabWidget.setCurrentIndex(0)  # Config (default)
+
+        self.download_menu.setEnabled(False)
 
 
     # def show_sample_model(self):
