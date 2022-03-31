@@ -259,7 +259,7 @@ class PhysiCellXMLCreator(QWidget):
     def download_config_cb(self):
         if self.nanohub_flag:
             if self.p is None:  # No process running.
-                self.tab_widget.setTabEnabled(5, True)   # enable (allow to be selected) the Vis tab
+                # self.tab_widget.setTabEnabled(5, True)   # enable (allow to be selected) the Vis tab
                 # self.message("Executing process")
                 self.p = QProcess()  # Keep a reference to the QProcess (e.g. on self) while it's running.
                 self.p.readyReadStandardOutput.connect(self.handle_stdout)
