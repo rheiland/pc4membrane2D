@@ -301,8 +301,8 @@ class PhysiCellXMLCreator(QWidget):
         return
 
     def download_svg_cb(self):
-        # if self.nanohub_flag:
-        if True:
+        if self.nanohub_flag:
+        # if True:
             if self.p is None:  # No process running.
                 self.p = QProcess()
                 self.p.readyReadStandardOutput.connect(self.handle_stdout)
