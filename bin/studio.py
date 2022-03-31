@@ -21,6 +21,7 @@ from xml.dom import minidom
 
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QProcess
 
 from config_tab import Config
 from cell_def_tab import CellDef 
