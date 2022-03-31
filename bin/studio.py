@@ -56,6 +56,7 @@ class PhysiCellXMLCreator(QWidget):
         if( 'HOME' in os.environ.keys() ):
             self.nanohub_flag = "home/nanohub" in os.environ['HOME']
 
+        self.p = None
 
         # self.title_prefix = "PhysiCell Studio: "
         self.title_prefix = "pc4mechanics2D: "
@@ -245,12 +246,29 @@ class PhysiCellXMLCreator(QWidget):
         file_menu = menubar.addMenu('&File')
 
         file_menu.addAction("Reset", self.reset_xml_root)
-        # file_menu.addAction("Download config.xml", self.download_config_cb)
+        file_menu.addAction("Download config.xml", self.download_config_cb)
 
         menubar.adjustSize()  # Argh. Otherwise, only 1st menu appears, with ">>" to others!
 
     #-----------------------------------------------------------------
+    def process_finished(self):
+        self.message("Download process finished.")
+        print("-- download finished.")
+        self.p = None
+
     def download_config_cb(self):
+        if self.nanohub_flag:
+            if self.p is None:  # No process running.
+                self.tab_widget.setTabEnabled(5, True)   # enable (allow to be selected) the Vis tab
+                # self.message("Executing process")
+                self.p = QProcess()  # Keep a reference to the QProcess (e.g. on self) while it's running.
+                self.p.readyReadStandardOutput.connect(self.handle_stdout)
+                self.p.readyReadStandardError.connect(self.handle_stderr)
+                self.p.stateChanged.connect(self.handle_state)
+                self.p.finished.connect(self.process_finished)  # Clean up once complete.
+                # self.p.start("exportfile",["--local",exec_str,xml_str])
+                # Should test to make sure tmpdir/config.xml exists; recall we should be *in* /tmpdir
+                self.p.start("exportfile config.xml")
         return
 
 
