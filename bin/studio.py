@@ -252,6 +252,10 @@ class PhysiCellXMLCreator(QWidget):
         menubar.adjustSize()  # Argh. Otherwise, only 1st menu appears, with ">>" to others!
 
     #-----------------------------------------------------------------
+    def message(self, s):
+        # self.text.appendPlainText(s)
+        print(s)
+
     def handle_stderr(self):
         data = self.p.readAllStandardError()
         stderr = bytes(data).decode("utf8")
