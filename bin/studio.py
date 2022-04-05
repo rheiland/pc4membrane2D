@@ -62,7 +62,7 @@ class PhysiCellXMLCreator(QWidget):
         self.p = None
 
         # self.title_prefix = "PhysiCell Studio: "
-        self.title_prefix = "pc4mechanics2D: "
+        self.title_prefix = "pc4membrane2D: "
         # self.title_prefix = "PhysiCell Studio"
         self.setWindowTitle(self.title_prefix)
 
@@ -302,7 +302,6 @@ class PhysiCellXMLCreator(QWidget):
 
     def download_svg_cb(self):
         if self.nanohub_flag:
-        # if True:
             if self.p is None:  # No process running.
                 self.p = QProcess()
                 self.p.readyReadStandardOutput.connect(self.handle_stdout)
