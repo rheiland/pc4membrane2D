@@ -8,7 +8,7 @@ cd src
 make
 
 # copy the executable to where the Studio wants it:
-cp myproj ..
+mv myproj ..
 
 # Change directory to the root dir and run the GUI from there
 cd ..
