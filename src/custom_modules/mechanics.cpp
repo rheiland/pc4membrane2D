@@ -1,5 +1,20 @@
 #include "./mechanics.h"
 
+double circle_dist(double ptx, double pty)
+{
+    static double cx = 0.0;  // assume circle center is always at x=0
+    // static double cy = 200.0;
+    // static double crad = 100.0;
+    double R_out = parameters.doubles("R_out");
+
+    double dx = ptx - cx;
+    // double dy = pty - cy;
+    double dy = pty - R_out;
+
+    double d = sqrt(dx*dx + dy*dy) - R_out;
+    return d;
+}
+
 void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 {
 	// Use this for homogenous attachment
@@ -59,34 +74,10 @@ void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt 
 
 	pCell->update_motility_vector(dt); 
 	pCell->velocity += phenotype.motility.motility_vector; 
-	
 	return; 
 }
 
-// void plasto_elastic_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
-// {
-	
-// 	static int nRP = 0; // "rest_position"
-	
-// 	// displacement 
-// 	std::vector<double> displacement = pCell->custom_data.vector_variables[nRP].value - pCell->position; 
-	
-// 	static int nEConst = pCell->custom_data.find_variable_index( "cell_elasticity" );
-// 	static int nPConst = pCell->custom_data.find_variable_index( "cell_plasticity" );
-
-// 	// first, update the agent's velocity based upon the elastic model
-// 	axpy( &( pCell->velocity ) , pCell->custom_data[nEConst] , displacement );
-
-// 	// now, plastic mechanical relaxation
-
-// 	double plastic_temp_constant = -dt * pCell->custom_data[nPConst];
-// 	axpy( &(pCell->custom_data.vector_variables[nRP].value) , plastic_temp_constant , displacement );
-	
-// 	return; 
-// }
-
 // specialized potential function 
-
 void add_heterotypic_potentials(Cell* my_cell , Cell* other_agent)
 {
 	static int nCellID = my_cell->custom_data.find_variable_index( "cell_ID" ); 
@@ -124,11 +115,15 @@ void add_heterotypic_potentials(Cell* my_cell , Cell* other_agent)
 	
 	//Repulsive
 	// Repulsion attributes
-	double R = my_cell->phenotype.geometry.radius + (*other_agent).phenotype.geometry.radius; 
+	// double R = my_cell->phenotype.geometry.radius + (*other_agent).phenotype.geometry.radius; 
+	double R_sums = my_cell->phenotype.geometry.radius + (*other_agent).phenotype.geometry.radius; 
 	
-	double RN = my_cell->phenotype.geometry.nuclear_radius + (*other_agent).phenotype.geometry.nuclear_radius;	
+	// double RN = my_cell->phenotype.geometry.nuclear_radius + (*other_agent).phenotype.geometry.nuclear_radius;	
+	// double R_nuclear_sums = my_cell->phenotype.geometry.nuclear_radius + (*other_agent).phenotype.geometry.nuclear_radius;	
 	double temp_r, c;
-	if( distance > R ) 
+
+	// if( distance > R ) 
+	if( distance > R_sums ) 
 	// R is basically distance between centers when they are attached, if distance is more, 
 	// then there's still space between them
 	{
@@ -137,7 +132,7 @@ void add_heterotypic_potentials(Cell* my_cell , Cell* other_agent)
 	else
 	{
 		temp_r = -distance; // -d
-		temp_r /= R; // -d/R
+		temp_r /= R_sums; // -d/R
 		temp_r += 1.0; // 1-d/R
 		temp_r *= temp_r; // (1-d/R)^2 
 		
@@ -231,15 +226,11 @@ void heterotypic_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double
 
 	pCell->update_motility_vector(dt); 
 	pCell->velocity += phenotype.motility.motility_vector; 
-	
 	return; 
 }
 
-
-
 void BM_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 {
-	
 	return; 
 }
 
@@ -263,29 +254,27 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
     int ncells_attached = 0;
 	double temp_r;
 	double temp_a;
-	double R = adhesion_radius / 2;
 
-	// int pbmIndex = microenvironment.find_density_index("pbm");
-	// int n_x_index = microenvironment.find_density_index("n_x");
-	// int n_y_index = microenvironment.find_density_index("n_y");
+	// double R = adhesion_radius / 2;
+	double adhesion_radius_half  = adhesion_radius / 2.0;
 
-	// int vi = microenvironment.nearest_voxel_index(pCell->position);
-
-	// std::vector<double> nearest_voxel = microenvironment.nearest_density_vector(pCell->position);
-
-	// double nx = microenvironment.density_vector(vi).at(n_x_index);
-	// double ny = microenvironment.density_vector(vi).at(n_y_index);
-
-	// double signed_dist = microenvironment.density_vector(vi).at(pbmIndex);
-//	// double signed_dist = microenvironment.density_vector(nearest_voxel[0], nearest_voxel[1]).at(pbmIndex);
+	double signed_dist = circle_dist(pCell->position[0],pCell->position[1]);
 
 	// double displacement = signed_dist;
-	double displacement = 1.0;
+	// double displacement = 1.0;
+
+    double R_out = parameters.doubles("R_out");  // = circle y-value
+    static double circle_x = 0.0;
+	double dx = pCell->position[0];
+	double dy = pCell->position[1] - R_out;
+    double norm_denom = sqrt(dx*dx + dy*dy);
+	dx /= norm_denom;
+	dy /= norm_denom;
 
 	// double dx = nx - pCell->position[0];
 	// double dy = ny - pCell->position[1];
-	double dx = 0.0;
-	double dy = -1.0;
+	// double dx = 0.0;
+	// double dy = -1.0;
 	std::vector<double> normal = {dx, dy, 0};
 	double dv = 0.01;
 	//===================================
@@ -299,18 +288,23 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 
 	if  (pCell->custom_data[attach_to_BM_i] == 1.0 )
 	{
-		if (displacement < 0) 
+		// if (displacement < 0) 
+		if (signed_dist < 0) 
 		{	
-			temp_a = displacement; // d
+			// temp_a = displacement; // d
+			temp_a = signed_dist; // d
 			temp_a /= adhesion_radius; // d/Ra
 			temp_a += 1.0; // 1-d/Ra
 			temp_a *= temp_a; // (1-d/Ra)^2 
 			temp_a *= membrane_adhesion_factor;
 
-			if (displacement > -R ) // repulsion
+			// if (displacement > -R ) // repulsion
+			if (signed_dist > -adhesion_radius_half ) // repulsion
 			{
-				temp_r = displacement;
-				temp_r /= R; // d/R
+				// temp_r = displacement;
+				// temp_r /= R; // d/R
+				temp_r = signed_dist;
+				temp_r /= adhesion_radius_half; // d/R
 				// temp_r += 1.0; // 1-d/R 
 				temp_r *= temp_r; // (1-d/R)^2 
 				temp_r *= membrane_repulsion_factor;
@@ -331,11 +325,13 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 	if( pCell->custom_data[attach_to_BM_i] == 0.0 )  // not attached to BM
 	{
         // if (displacement <= 0.0 && displacement > -adhesion_radius )
-		if (displacement > -adhesion_radius )
+		// if (displacement > -adhesion_radius )
+		if (signed_dist > -adhesion_radius )
         {
             pCell->custom_data[attach_to_BM_i] = 1.0;   // attached to BM now
             pCell->custom_data[attach_time_i] = 0.0;   // reset its time of being attached
-			temp_r = displacement; // d
+			// temp_r = displacement; // d
+			temp_r = signed_dist; // d
 			temp_r /= adhesion_radius; // d/R
 			temp_r += 1.0; // 1-d/R 
 			temp_r *= temp_r; // (1-d/R)^2 

@@ -160,7 +160,7 @@ void setup_tissue( void )
 	int num_cell_chunks = parameters.ints("num_cell_chunks");
 	int num_subcell_layers = parameters.ints("num_subcell_layers");
 	double R_out = parameters.doubles("R_out");
-	double R_in = parameters.doubles("R_in");
+	// double R_in = parameters.doubles("R_in");
 	double theta_start = parameters.doubles("theta_start");
 	double twopi_val = 6.28;
 	theta_start = theta_start * twopi_val / 360.;
