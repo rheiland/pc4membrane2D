@@ -99,13 +99,14 @@ void create_cell_types( void )
 	cell_defaults.functions.calculate_distance_to_membrane = NULL; 
 
 	// let's add custom data not in the XML 
-	// std::vector<double> zero = {0,0,0};
-	// cell_defaults.custom_data.add_vector_variable( "rest_position" , "microns" , zero ); 
-	// cell_defaults.custom_data.add_vector_variable( "BM_attach_point" , "microns", zero ); 
+	std::vector<double> zero = {0,0,0};
+	cell_defaults.custom_data.add_vector_variable( "rest_position" , "microns" , zero ); 
+	cell_defaults.custom_data.add_vector_variable( "BM_attach_point" , "microns", zero ); 
 
 	/*
 	   This parses the cell definitions in the XML config file. 
 	*/
+	
 	initialize_cell_definitions_from_pugixml(); 
 	
 	/* 
@@ -113,6 +114,7 @@ void create_cell_types( void )
 	   
 	   This is a good place to set custom functions. 
 	*/ 
+	
 	cell_defaults.functions.update_phenotype = phenotype_function; 
 	cell_defaults.functions.custom_cell_rule = custom_function; 
 	cell_defaults.functions.contact_function = contact_function; 
@@ -120,15 +122,29 @@ void create_cell_types( void )
 	/*
 	   This builds the map of cell definitions and summarizes the setup. 
 	*/
+		
 	build_cell_definitions_maps(); 
 	display_cell_definitions( std::cout ); 
 
-	// // spring attachment changes
-	// cell_defaults.phenotype.mechanics.attachment_elastic_constant = parameters.doubles( "elastic_coefficient" );
 
-	// Cell_Definition* pCD = find_cell_definition( "epithelial_subcell" ); 
+
+
+	// // spring attachment changes
+	cell_defaults.phenotype.mechanics.attachment_elastic_constant = parameters.doubles( "elastic_coefficient" );
+	
+
+	// Cell_Definition* pCD = find_cell_definition( "mesangial_matrix_subcell" ); 
+	// Cell_Definition* pCD = find_cell_definition( "parietal_basement_membrane_subcell" ); 
 	Cell_Definition* pCD = find_cell_definition( "epithelial" ); 
+	// pCD->functions.update_phenotype = pheno_update; 
+	// // pCD->functions.custom_cell_rule = NULL; // extra_elastic_attachment_mechanics;  // pre-1.8.0
+	// pCD->functions.custom_cell_rule = custom_cell_update;   // dt_mechanics
 	pCD->functions.custom_cell_rule = epithelial_special_mechanics;   // dt_mechanics
+	// pCD->functions.contact_function = standard_elastic_contact_function; 
+	// // pCD->functions.update_migration_bias = worker_cell_motility;
+	// pCD->phenotype.mechanics.attachment_elastic_constant = parameters.doubles( "elastic_const" );
+
+    cell_defaults.phenotype.motility.migration_bias_direction.assign({ 0.,-1., 0.} ); //rwh
 
 	return; 
 }
@@ -141,104 +157,13 @@ void setup_microenvironment( void )
 	// extra Dirichlet nodes here. 
 	
 	// initialize BioFVM 
+	
 	initialize_microenvironment(); 	
+	
 	return; 
 }
 
 void setup_tissue( void )
-{
-	static int nCellID = cell_defaults.custom_data.find_variable_index( "cell_ID" ); 
-
-	Cell_Definition* pCD = cell_definitions_by_name["epithelial"]; 
-
-		// <num_cell_chunks type="int" units="" description="# of (large) cells">3</num_cell_chunks>
-		// <num_subcell_layers type="int" units="" description="# of layers of subcells">8</num_subcell_layers>
-		// <R_out type="double" units="micron" description="outer radius">250</R_out>
-		// <R_in type="double" units="micron" description="inner radius">200</R_in>
-		// <theta_start type="double" units="degrees" description="start of membrane arc">225</theta_start>
-		// <theta_stop type="double" units="degrees" description="start of membrane arc">315</theta_stop>
-	int num_cell_chunks = parameters.ints("num_cell_chunks");
-	int num_subcell_layers = parameters.ints("num_subcell_layers");
-	double R_out = parameters.doubles("R_out");
-	double R_in = parameters.doubles("R_in");
-	double theta_start = parameters.doubles("theta_start");
-	double twopi_val = 6.28;
-	theta_start = theta_start * twopi_val / 360.;
-	double theta_stop = parameters.doubles("theta_stop");
-	theta_stop = theta_stop * twopi_val / 360.;
-
-	double cell_radius = 6.0;  // use cell volume to compute
-	double cell_diam = 2.0 * cell_radius;
-	double xctr = 0.0;
-	double yctr = R_out;
-
-	double circum = twopi_val * R_out ;
-	int ncells_circle = circum / cell_diam;
-
-
-	std::vector<double> position = {0,0,0}; 
-	position[2] = 0.0; 
-	Cell* pC;
-	int my_ID = 0; 
-	// for( int n = 0 ; n < 10; n++ )
-	// {
-	// 	position[0] = float(n) * 5;
-	// 	position[1] = 0.0; 
-		
-	// 	pC = create_cell( *pCD ); 
-	// 	pC->assign_position( position );
-	// 	pC->custom_data[nCellID] = float(my_ID); 
-	// }
-
-	for (int nlayer=0; nlayer < num_subcell_layers; nlayer++)
-	{
-		// print("------- layer ",nlayer)
-		circum = twopi_val * R_out;
-		ncells_circle = circum / cell_diam;
-		double theta_del = twopi_val / ncells_circle;
-		// print("theta_del (cells)= ",theta_del);
-		double rval = R_out - cell_diam;
-		// print("theta0, theta1 = ",theta0,theta1);
-		double theta_chunk_del = (theta_stop - theta_start) / num_cell_chunks;
-		for (double tval=theta_start; tval <= theta_stop; tval+=theta_del)
-		{
-			double xv = xctr + rval * std::cos(tval);
-			double yv = yctr + rval * std::sin(tval);
-			// cells_x = np.append(cells_x, xv);
-			// cells_y = np.append(cells_y, yv);
-			// ncells += 1;
-			int chunk_id = int((tval - theta_start) / theta_chunk_del);
-			int cell_id = 100 + chunk_id;
-
-			Cell* pCell = create_cell( *pCD ); 
-			pCell->assign_position( xv,yv, 0.0 ); 
-			pCell->custom_data[nCellID] = chunk_id; 
-
-			// # print(xval_offset,',',yval,',0.0, 2, 101')  # x,y,z, cell type, [sub]cell ID
-			// # filep.write(f"{cells_x[ipt]},{cells_y[ipt]}, 0.0, {cell_type}, {cell_id}\n")
-			// filep.write(f"{xv},{yv}, 0.0, {cell_type}, {cell_id}\n")
-		}
-		R_out -= (cell_diam - cell_diam/5.0);
-		if (nlayer % 2 == 0)
-			theta_start += theta_del/2;
-		else
-			theta_stop -= theta_del/2;
-	}
-
-// 		int my_type = (int) data[3]; 
-// 		int my_ID = (int) data[4];
-// 		Cell_Definition* pCD = find_cell_definition( my_type );
-// 		if( pCD != NULL and my_type != 12)
-// 		{
-// 			std::cout << "Creating " << pCD->name << " (type=" << pCD->type << ") at " << position << std::endl; 
-// 			Cell* pCell = create_cell( *pCD ); 
-// 			pCell->assign_position( position ); 
-			
-// 			pCell->custom_data[nCellID] = my_ID; 
-// 		}
-}
-
-void setup_tissue_random( void )
 {
 	double Xmin = microenvironment.mesh.bounding_box[0]; 
 	double Ymin = microenvironment.mesh.bounding_box[1]; 
@@ -253,40 +178,42 @@ void setup_tissue_random( void )
 		Zmin = 0.0; 
 		Zmax = 0.0; 
 	}
+	
 	double Xrange = Xmax - Xmin; 
 	double Yrange = Ymax - Ymin; 
 	double Zrange = Zmax - Zmin; 
 	
+	// create some of each type of cell 
+	
 	Cell* pC;
-	for( int k=0; k < cell_definitions_by_index.size() ; k++ )
-	{
-		Cell_Definition* pCD = cell_definitions_by_index[k]; 
-		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
-		// for( int n = 0 ; n < parameters.ints("number_of_cells") ; n++ )
-		for( int n = 0 ; n < 100; n++ )
-		{
-			std::vector<double> position = {0,0,0}; 
-			position[0] = Xmin + UniformRandom()*Xrange; 
-			position[1] = Ymin + UniformRandom()*Yrange; 
-			// position[2] = Zmin + UniformRandom()*Zrange; 
-			position[2] = 0.0; 
+	
+	// for( int k=0; k < cell_definitions_by_index.size() ; k++ )
+	// {
+	// 	Cell_Definition* pCD = cell_definitions_by_index[k]; 
+	// 	std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
+	// 	for( int n = 0 ; n < parameters.ints("number_of_cells") ; n++ )
+	// 	{
+	// 		std::vector<double> position = {0,0,0}; 
+	// 		position[0] = Xmin + UniformRandom()*Xrange; 
+	// 		position[1] = Ymin + UniformRandom()*Yrange; 
+	// 		position[2] = Zmin + UniformRandom()*Zrange; 
 			
-			pC = create_cell( *pCD ); 
-			pC->assign_position( position );
-		}
-	}
-	std::cout << std::endl; 
+	// 		pC = create_cell( *pCD ); 
+	// 		pC->assign_position( position );
+	// 	}
+	// }
+	// std::cout << std::endl; 
 	
 	// load cells from your CSV file (if enabled)
-	// load_subcells_from_pugixml(); 	
+	load_subcells_from_pugixml(); 	
 
 	// more custom setup 
 	// // for each cell, set its relaxed position to current position 
-	// int nRP = 0; // cell_defaults.custom_data.find_vector_variable( "rest_position");
+	int nRP = 0; // cell_defaults.custom_data.find_vector_variable( "rest_position");
 	for( int n=0 ; n < (*all_cells).size(); n++ )
 	{
 		Cell* pC = (*all_cells)[n]; 
-		// pC->custom_data.vector_variables[nRP].value = pC->position; 
+		pC->custom_data.vector_variables[nRP].value = pC->position; 
 	}
 	
 	return; 
@@ -306,114 +233,220 @@ void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& 
 { return; } 
 
 
-// bool load_subcells_from_pugixml( pugi::xml_node root )
-// {
-// 	pugi::xml_node node = root.child( "initial_conditions" ); 
-// 	if( !node )
-// 	{ 
-// 		std::cout << "Warning: XML-based cell positions has wrong formating. Ignoring!" << std::endl; 
-// 		return false;
-// 	}
+bool load_subcells_from_pugixml( pugi::xml_node root )
+{
+	pugi::xml_node node = root.child( "initial_conditions" ); 
+	if( !node )
+	{ 
+		std::cout << "Warning: XML-based cell positions has wrong formating. Ignoring!" << std::endl; 
+		return false;
+	}
 
-// 	node = node.child( "cell_positions" ); 
-// 	if( !node )
-// 	{
-// 		std::cout << "Warning: XML-based cell positions has wrong formating. Ignoring!" << std::endl; 
-// 		 return false;
-// 	}
+	node = node.child( "cell_positions" ); 
+	if( !node )
+	{
+		std::cout << "Warning: XML-based cell positions has wrong formating. Ignoring!" << std::endl; 
+		 return false;
+	}
 
-// 	// enabled? 
-// 	if( node.attribute("enabled").as_bool() == false )
-// 	{ return false; }
+	// enabled? 
+	if( node.attribute("enabled").as_bool() == false )
+	{ return false; }
 
-// 	// get filename 
+	// get filename 
 
-// 	std::string folder = xml_get_string_value( node, "folder" ); 
-// 	std::string filename = xml_get_string_value( node, "filename" ); 
-// 	std::string input_filename = folder + "/" + filename; 
+	std::string folder = xml_get_string_value( node, "folder" ); 
+	std::string filename = xml_get_string_value( node, "filename" ); 
 
-// 	std::string filetype = node.attribute("type").value() ; 
+	// std::string input_filename = folder + "/" + filename; 
+    // rwh: WARNING - this will likely break when not running from the GUI (where env var is set)
+    const char* env_p = std::getenv("KIDNEY_DATA_PATH");
+    std::cout << "custom.cpp: load_subcells_from_pugixml():   KIDNEY_DATA_PATH: "<<env_p<< std::endl;
+	std::string input_filename = env_p;
+	input_filename += "/" + filename; 
+    std::cout << "custom.cpp: load_subcells_from_pugixml():   input_filename: "<<input_filename<< std::endl;
 
-// 	// what kind? 
-// 	if( filetype == "csv" || filetype == "CSV" )
-// 	{
-// 		std::cout << "Loading cells from CSV file " << input_filename << " ... " << std::endl; 
-// 		load_subcells_csv( input_filename );
-// 		system("sleep 1");
-// 		return true; 
-// 	}
-// 	if( filetype == "matlab" || filetype == "mat" || filetype == "MAT" )
-// 	{
-// 		std::cout << "Error: Load cell positions from matlab not yet supported. Try CSV." << std::endl; 
-// 		exit(-1); 
-// 		std::cout << "Loading cells from matlab file " << input_filename << " ... " << std::endl; 
-// 		return false; 
-// 	}
-// 	if( filetype == "scene" )
-// 	{
-// 		std::cout << "Error: load cell positions from scene not yet supported. Try CSV." << std::endl; 
-// 		exit(-1); 
-// 		std::cout << "Loading cells from scene file " << input_filename << " ... " << std::endl; 
-// 		return false; 
-// 	}
-// 	if( filetype == "physicell" || filetype == "PhysiCell" )
-// 	{
-// 		std::cout << "Error: load cell positions from PhysiCell snapshot not yet supported. Try CSV." << std::endl; 
-// 		exit(-1); 
-// 		std::cout << "Loading cells from PhysiCell file " << input_filename << " ... " << std::endl; 
-// 		return false; 
-// 	}
+	std::string filetype = node.attribute("type").value() ; 
 
-// 	return false; 
-// }
+	// what kind? 
+	if( filetype == "csv" || filetype == "CSV" )
+	{
+		std::cout << "Loading cells from CSV file " << input_filename << " ... " << std::endl; 
+		load_subcells_csv( input_filename );
+		system("sleep 1");
+		return true; 
+	}
+	if( filetype == "matlab" || filetype == "mat" || filetype == "MAT" )
+	{
+		std::cout << "Error: Load cell positions from matlab not yet supported. Try CSV." << std::endl; 
+		exit(-1); 
+		std::cout << "Loading cells from matlab file " << input_filename << " ... " << std::endl; 
+		return false; 
+	}
+	if( filetype == "scene" )
+	{
+		std::cout << "Error: load cell positions from scene not yet supported. Try CSV." << std::endl; 
+		exit(-1); 
+		std::cout << "Loading cells from scene file " << input_filename << " ... " << std::endl; 
+		return false; 
+	}
+	if( filetype == "physicell" || filetype == "PhysiCell" )
+	{
+		std::cout << "Error: load cell positions from PhysiCell snapshot not yet supported. Try CSV." << std::endl; 
+		exit(-1); 
+		std::cout << "Loading cells from PhysiCell file " << input_filename << " ... " << std::endl; 
+		return false; 
+	}
 
-// void load_subcells_csv( std::string filename )
-// {
+	return false; 
+}
+
+
+
+std::tuple<double, double, double> get_minimum_distance(int x_grid, int y_grid, std::vector<std::tuple<double,double>> endothelial_subcell_coordinates)
+{
+	double min_value = INT64_MAX;
+	double x_closest = 0.0;
+	double y_closest = 0.0;
+	for (int i=0; i < endothelial_subcell_coordinates.size(); i++)
+	{
+		double distance = sqrt(pow(x_grid - std::get<0>(endothelial_subcell_coordinates.at(i)), 2) + pow(y_grid - std::get<1>(endothelial_subcell_coordinates.at(i)), 2));
+		if (distance < min_value){
+			min_value = distance;
+			x_closest = std::get<0>(endothelial_subcell_coordinates.at(i));
+			y_closest = std::get<1>(endothelial_subcell_coordinates.at(i));
+		}
+	}
+	std::tuple<double, double, double> closest_membrane_point = {x_closest, y_closest, min_value};
+	return closest_membrane_point;
+
+}
+
+// void loadPBMCSV(std::string filename) {
+
 // 	std::ifstream file( filename, std::ios::in );
 // 	if( !file )
 // 	{ 
 // 		std::cout << "Error: " << filename << " not found during cell loading. Quitting." << std::endl; 
 // 		exit(-1);
 // 	}
-// 	std::cout << "filename is : " << filename << std::endl;
-// 	static int nCellID = cell_defaults.custom_data.find_variable_index( "cell_ID" ); 
-
 // 	std::string line;
 // 	while (std::getline(file, line))
 // 	{
 // 		std::vector<double> data;
 // 		csv_to_vector( line.c_str() , data ); 
 
-// 		if( data.size() != 5 )
+// 		pbmSDF.push_back(data);
+// 	}
+// }
+
+
+// void loadNormalVector(std::string filename) {
+
+// 	std::ifstream file( filename, std::ios::in );
+// 	if( !file )
+// 	{ 
+// 		std::cout << "Error: " << filename << " not found during cell loading. Quitting." << std::endl; 
+// 		exit(-1);
+// 	}
+// 	std::string line;
+// 	while (std::getline(file, line))
+// 	{
+// 		std::vector<double> data;
+// 		csv_to_vector( line.c_str() , data ); 
+
+// 		if( data.size() != 2 )
 // 		{
-// 			std::cout << "Error! Importing subcells from a CSV file expects each row to be x,y,z,typeID,cellID." << std::endl;
+// 			std::cout << "Error! Importing subcells from a CSV file expects each row to be x and y." << std::endl;
 // 			exit(-1);
 // 		}
 
-// 		std::vector<double> position = { data[0] , data[1] , data[2] };
+// 		normalVector.push_back(data);
+// 	}
+// }
 
-// 		int my_type = (int) data[3]; 
-// 		int my_ID = (int) data[4];
-// 		Cell_Definition* pCD = find_cell_definition( my_type );
-// 		if( pCD != NULL and my_type != 12)
+// void add_sdf_substrate()
+// {
+
+// 	int pbmIndex = microenvironment.find_density_index("pbm");
+// 	int n_x_index = microenvironment.find_density_index("n_x");
+// 	int n_y_index = microenvironment.find_density_index("n_y");
+
+// 	for (int i=0; i < microenvironment.mesh.x_coordinates.size(); i++)
+// 	{
+// 		for (int j=0; j < microenvironment.mesh.y_coordinates.size(); j++)
 // 		{
-// 			std::cout << "Creating " << pCD->name << " (type=" << pCD->type << ") at " << position << std::endl; 
-// 			Cell* pCell = create_cell( *pCD ); 
-// 			pCell->assign_position( position ); 
+// 			// std::cout << "voxel index " << microenvironment.voxel_index(i, j, 0) << std::endl;
+// 			double sdfValue = pbmSDF.at(i).at(j);
+// 			microenvironment.nearest_density_vector(microenvironment.voxel_index(i, j, 0)).at(pbmIndex) = sdfValue;
+// 			// microenvironment.density_vector(i, j, 0).at(pbmIndex) = sdfValue;
+	
 			
-// 			pCell->custom_data[nCellID] = my_ID; 
-// 		}
+// 			double n_x_value = normalVector.at(i*microenvironment.mesh.y_coordinates.size() + j).at(0);
+// 			// double n_x_value = normalVector.at(j*microenvironment.mesh.y_coordinates.size() + i).at(0);
+// 			// microenvironment.density_vector(i, j, 0).at(n_x_index) = n_x_value;
+// 			microenvironment.nearest_density_vector(microenvironment.voxel_index(i, j, 0)).at(n_x_index) = n_x_value;
 
+// 			double n_y_value = normalVector.at(i*microenvironment.mesh.y_coordinates.size() + j).at(1);
+// 			// double n_y_value = normalVector.at(j*microenvironment.mesh.y_coordinates.size() + i).at(1);
+// 			// microenvironment.density_vector(i, j, 0).at(n_y_index) = n_y_value;
+// 			microenvironment.nearest_density_vector(microenvironment.voxel_index(i, j, 0)).at(n_y_index) = n_y_value;
+
+// 		}
 // 	}
 
-// 	file.close(); 	
-// 	// loadPBMCSV("./config/sdf.csv");
-// 	// loadNormalVector("./config/normal_data.csv");
-// 	// add_sdf_substrate();
 // }
+
+void load_subcells_csv( std::string filename )
+{
+	std::ifstream file( filename, std::ios::in );
+	if( !file )
+	{ 
+		std::cout << "Error: " << filename << " not found during cell loading. Quitting." << std::endl; 
+		exit(-1);
+	}
+	std::cout << "filename is : " << filename << std::endl;
+	static int nCellID = cell_defaults.custom_data.find_variable_index( "cell_ID" ); 
+
+	std::string line;
+	while (std::getline(file, line))
+	{
+		std::vector<double> data;
+		csv_to_vector( line.c_str() , data ); 
+
+		if( data.size() != 5 )
+		{
+			std::cout << "Error! Importing subcells from a CSV file expects each row to be x,y,z,typeID,cellID." << std::endl;
+			exit(-1);
+		}
+
+		std::vector<double> position = { data[0] , data[1] , data[2] };
+
+		int my_type = (int) data[3]; 
+		int my_ID = (int) data[4];
+		Cell_Definition* pCD = find_cell_definition( my_type );
+		if( pCD != NULL and my_type != 12)
+		{
+			std::cout << "Creating " << pCD->name << " (type=" << pCD->type << ") at " << position << std::endl; 
+			Cell* pCell = create_cell( *pCD ); 
+			pCell->assign_position( position ); 
+			
+			pCell->custom_data[nCellID] = my_ID; 
+		}
+
+	}
+
+	file.close(); 	
+	// loadPBMCSV("./config/sdf.csv");
+	// loadNormalVector("./config/normal_data.csv");
+	// loadPBMCSV("../data/sdf.csv");
+	// loadNormalVector("../data/normal_data.csv");
+	// add_sdf_substrate();
+}
 
 void pheno_update( Cell* pCell , Phenotype& phenotype , double dt )
 {
+	// return; 
 	std::vector<Cell*> nearby = pCell->cells_in_my_container(); 
 	
 	// if at least 2 neighbors, turn off secretion 
@@ -430,8 +463,8 @@ void pheno_update( Cell* pCell , Phenotype& phenotype , double dt )
 }
 
 
-// bool load_subcells_from_pugixml( void )
-// { return load_subcells_from_pugixml( physicell_config_root ); }
+bool load_subcells_from_pugixml( void )
+{ return load_subcells_from_pugixml( physicell_config_root ); }
 
 std::vector<std::string> paint_by_number_cell_coloring_wrapped( Cell* pCell )
 {

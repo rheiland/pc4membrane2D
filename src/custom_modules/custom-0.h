@@ -105,14 +105,20 @@ void setup_tissue( void );
 void setup_microenvironment( void ); 
 
 // custom pathology coloring function 
+
 std::vector<std::string> my_coloring_function( Cell* );
 
 // custom functions can go here 
+
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt );
 void custom_function( Cell* pCell, Phenotype& phenotype , double dt );
+
 void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt ); 
 
+
+
 // reading subcells 
+
 void load_subcells_csv( std::string filename ); 
 void load_endothelial_points_csv(std::string filename);
 bool load_subcells_from_pugixml( pugi::xml_node root ); 
@@ -121,7 +127,9 @@ bool load_subcells_from_pugixml( void );
 // plots 
 std::vector<std::string> paint_by_number_cell_coloring_wrapped( Cell* pCell ); 
 
+
 void pheno_update( Cell* pCell, Phenotype& phenotype, double dt ); 
 void custom_cell_update( Cell* pCell, Phenotype& phenotype, double dt ); 
 
 // Linkage* create_link(std::tuple<double, double> position);
+

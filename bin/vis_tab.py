@@ -414,6 +414,7 @@ class Vis(QWidget):
             self.plot_xmax = float(self.xmax)
             self.plot_ymin = float(self.ymin)
             self.plot_ymax = float(self.ymax)
+            print("-------- reset_plot_range(): plot_ymin,ymax=  ",self.plot_ymin,self.plot_ymax)
         except:
             pass
 
@@ -975,9 +976,11 @@ class Vis(QWidget):
     def plot_arc(self):
         # circ_radius = 150.
         circ_radius = 300.
+        circ_radius = 250.   # get from .xml user param
         xctr = 0.
         # yctr = 130.
         yctr = 200.
+        yctr = circ_radius
         xlist = []
         ylist = []
         for t in np.arange(3.14, 6.28, 0.02):
@@ -1198,6 +1201,7 @@ class Vis(QWidget):
         # plt.xlim(self.xmin, self.xmax)
         # plt.ylim(self.ymin, self.ymax)
 
+        # print("plot_svg(): plot_xmin,xmax, ymin,ymax= ",self.plot_xmin,self.plot_xmax,self.plot_ymin,self.plot_ymax)
         # set xrange & yrange of plots
         self.ax0.set_xlim(self.plot_xmin, self.plot_xmax)
         # self.ax0.set_xlim(-450, self.xmax)

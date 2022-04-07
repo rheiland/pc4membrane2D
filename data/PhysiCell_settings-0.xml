@@ -61,21 +61,39 @@
 				units="mmHg"
 				enabled="true">38</Dirichlet_boundary_condition>
 			<Dirichlet_options>
-				<boundary_value ID="ymin" enabled="true">24</boundary_value>
-				<boundary_value ID="ymax" enabled="true">6</boundary_value>
-				<boundary_value ID="xmin" enabled="false">38</boundary_value>
-				<boundary_value ID="xmax" enabled="false">10</boundary_value>
-				<boundary_value ID="zmin" enabled="false" hidden="true">38</boundary_value>
-				<boundary_value ID="zmax" enabled="false" hidden="true">10</boundary_value>
+				<boundary_value
+					ID="ymin"
+					enabled="true">24</boundary_value>
+				<boundary_value
+					ID="ymax"
+					enabled="true">6</boundary_value>
+				<boundary_value
+					ID="xmin"
+					enabled="false">38</boundary_value>
+				<boundary_value
+					ID="xmax"
+					enabled="false">10</boundary_value>
+				<boundary_value
+					ID="zmin"
+					enabled="false"
+					hidden="true">38</boundary_value>
+				<boundary_value
+					ID="zmax"
+					enabled="false"
+					hidden="true">10</boundary_value>
 			</Dirichlet_options>
 		</variable>
 		<options>
 			<calculate_gradients>true</calculate_gradients>
 			<track_internalized_substrates_in_each_agent>true</track_internalized_substrates_in_each_agent>
-			<initial_condition enabled="false" type="matlab">
+			<initial_condition
+				enabled="false"
+				type="matlab">
 				<filename>./config/initial.mat</filename>
 			</initial_condition>
-			<dirichlet_nodes enabled="false" type="matlab">
+			<dirichlet_nodes
+				enabled="false"
+				type="matlab">
 				<filename>./config/dirichlet.mat</filename>
 			</dirichlet_nodes>
 		</options>
@@ -83,7 +101,9 @@
 	<cell_definitions>
 		<cell_definition name="epithelial" ID="0">
 			<phenotype>
-				<cycle code="6" name="Flow cytometry model (separated)">
+				<cycle
+					code="6"
+					name="Flow cytometry model (separated)">
 					<phase_durations
 						units="min">
 						<duration
@@ -101,7 +121,9 @@
 					</phase_durations>
 				</cycle>
 				<death>
-					<model code="100" name="apoptosis">
+					<model
+						code="100"
+						name="apoptosis">
 						<death_rate
 							units="1/min">0</death_rate>
 						<phase_durations
@@ -212,13 +234,17 @@
 				</secretion>
 			</phenotype>
 			<custom_data>
+				<cell_elasticity>0.000</cell_elasticity>
+				<cell_plasticity>0.0000</cell_plasticity>
 				<cell_ID>0.0</cell_ID>
 				<relative_adhesion_other_cell_types>1</relative_adhesion_other_cell_types>
 				<relative_adhesion_other_cells>0.3</relative_adhesion_other_cells>
-				<relative_maximum_membrane_adhesion_distance>0.3</relative_maximum_membrane_adhesion_distance>
+				<attach_to_BM units="dimensionless">0.0</attach_to_BM> 
 				<attach_lifetime units="min">1.0</attach_lifetime> 
 				<attach_time units="min">0.0</attach_time> 
-				<attach_to_BM units="dimensionless">0.0</attach_to_BM> 
+				<elastic_const units="dimensionless">0.0</elastic_const> 
+				<attach_BM_x units="micron">0.0</attach_BM_x> 
+				<attach_BM_y units="micron">0.0</attach_BM_y>
 				<subcell_adhesion_factor>1</subcell_adhesion_factor>
 				<subcell_repulsion_factor>1</subcell_repulsion_factor>
 				<membrane_adhesion_factor>1</membrane_adhesion_factor>
@@ -228,20 +254,16 @@
 		</cell_definition>
 	</cell_definitions>
 	<initial_conditions>
-		<cell_positions enabled="false" type="csv">
+		<cell_positions enabled="true" type="csv">
 			<folder>.</folder>
 			<filename>cells.csv</filename>
 		</cell_positions>
 	</initial_conditions>
 	<user_parameters>
-		<num_cell_chunks type="int" units="" description="# of (large) cells">3</num_cell_chunks>
-		<num_subcell_layers type="int" units="" description="# of layers of subcells">8</num_subcell_layers>
-		<R_out type="double" units="micron" description="outer radius">250</R_out>
-		<R_in type="double" units="micron" description="inner radius">200</R_in>
-		<theta_start type="double" units="degrees" description="start of membrane arc">225</theta_start>
-		<theta_stop type="double" units="degrees" description="start of membrane arc">315</theta_stop>
-		<mechanics_voxel_size type="double" units="micron"
-			description="edge length of mechanics voxel. Set ~2 x agent radius x max relative interaction distance (default: 30)">30</mechanics_voxel_size>
 		<random_seed type="int" units="dimensionless" description="">0</random_seed>
+		<mechanics_voxel_size
+			type="double"
+			units="micron"
+			description="edge length of mechanics voxel. Set ~2 x agent radius x max relative interaction distance (default: 30)">30</mechanics_voxel_size>
 	</user_parameters>
 </PhysiCell_settings>
