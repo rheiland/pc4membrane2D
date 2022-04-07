@@ -19,3 +19,6 @@ In the GUI:
 * in the Run tab, click `Run Simulation`. Note: the simulation is run *from* the `tmpdir` directory and that's where all output files will be written.
 * in the Plot tab, click `Play`.
 * edit params if you want then repeat: Run, Play.
+* the diagram shows the User Params that define the membrane's curvature and create subcells near the membrane.
+
+![membrane_user_params](images/membrane_user_params.png)
