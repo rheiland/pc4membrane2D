@@ -151,28 +151,22 @@ void setup_tissue( void )
 
 	Cell_Definition* pCD = cell_definitions_by_name["epithelial"]; 
 
-		// <num_cell_chunks type="int" units="" description="# of (large) cells">3</num_cell_chunks>
-		// <num_subcell_layers type="int" units="" description="# of layers of subcells">8</num_subcell_layers>
-		// <R_out type="double" units="micron" description="outer radius">250</R_out>
-		// <R_in type="double" units="micron" description="inner radius">200</R_in>
-		// <theta_start type="double" units="degrees" description="start of membrane arc">225</theta_start>
-		// <theta_stop type="double" units="degrees" description="start of membrane arc">315</theta_stop>
 	int num_cell_chunks = parameters.ints("num_cell_chunks");
 	int num_subcell_layers = parameters.ints("num_subcell_layers");
-	double R_out = parameters.doubles("R_out");
+	double R_circle = parameters.doubles("R_circle");
 	// double R_in = parameters.doubles("R_in");
 	double theta_start = parameters.doubles("theta_start");
-	double twopi_val = 6.28;
-	theta_start = theta_start * twopi_val / 360.;
+	double twopi_val = 6.283185;
+	theta_start = theta_start * twopi_val / 360.;  // radians
 	double theta_stop = parameters.doubles("theta_stop");
-	theta_stop = theta_stop * twopi_val / 360.;
+	theta_stop = theta_stop * twopi_val / 360.;  // radians
 
 	double cell_radius = 6.0;  // use cell volume to compute
 	double cell_diam = 2.0 * cell_radius;
 	double xctr = 0.0;
-	double yctr = R_out;
+	double yctr = R_circle;
 
-	double circum = twopi_val * R_out ;
+	double circum = twopi_val * R_circle ;
 	int ncells_circle = circum / cell_diam;
 
 
@@ -193,11 +187,11 @@ void setup_tissue( void )
 	for (int nlayer=0; nlayer < num_subcell_layers; nlayer++)
 	{
 		// print("------- layer ",nlayer)
-		circum = twopi_val * R_out;
+		circum = twopi_val * R_circle;
 		ncells_circle = circum / cell_diam;
 		double theta_del = twopi_val / ncells_circle;
 		// print("theta_del (cells)= ",theta_del);
-		double rval = R_out - cell_diam;
+		double rval = R_circle - cell_diam;
 		// print("theta0, theta1 = ",theta0,theta1);
 		double theta_chunk_del = (theta_stop - theta_start) / num_cell_chunks;
 		for (double tval=theta_start; tval <= theta_stop; tval+=theta_del)
@@ -218,7 +212,7 @@ void setup_tissue( void )
 			// # filep.write(f"{cells_x[ipt]},{cells_y[ipt]}, 0.0, {cell_type}, {cell_id}\n")
 			// filep.write(f"{xv},{yv}, 0.0, {cell_type}, {cell_id}\n")
 		}
-		R_out -= (cell_diam - cell_diam/5.0);
+		R_circle -= (cell_diam - cell_diam/5.0);
 		if (nlayer % 2 == 0)
 			theta_start += theta_del/2;
 		else

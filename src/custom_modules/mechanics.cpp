@@ -5,13 +5,13 @@ double circle_dist(double ptx, double pty)
     static double cx = 0.0;  // assume circle center is always at x=0
     // static double cy = 200.0;
     // static double crad = 100.0;
-    double R_out = parameters.doubles("R_out");
+    double R_circle = parameters.doubles("R_circle");
 
     double dx = ptx - cx;
     // double dy = pty - cy;
-    double dy = pty - R_out;
+    double dy = pty - R_circle;
 
-    double d = sqrt(dx*dx + dy*dy) - R_out;
+    double d = sqrt(dx*dx + dy*dy) - R_circle;
     return d;
 }
 
@@ -263,10 +263,10 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 	// double displacement = signed_dist;
 	// double displacement = 1.0;
 
-    double R_out = parameters.doubles("R_out");  // = circle y-value
+    double R_circle = parameters.doubles("R_circle");  // = circle y-value
     static double circle_x = 0.0;
 	double dx = pCell->position[0];
-	double dy = pCell->position[1] - R_out;
+	double dy = pCell->position[1] - R_circle;
     double norm_denom = sqrt(dx*dx + dy*dy);
 	dx /= norm_denom;
 	dy /= norm_denom;
