@@ -195,6 +195,8 @@ class PhysiCellXMLCreator(QWidget):
             self.run_tab.microenv_tab = self.microenv_tab 
             self.run_tab.celldef_tab = self.celldef_tab
             self.run_tab.user_params_tab = self.user_params_tab
+            # self.run_tab.vis_tab = self.vis_tab  # do below after it's defined
+
             self.run_tab.tree = self.tree
 
         #------------------
@@ -212,6 +214,7 @@ class PhysiCellXMLCreator(QWidget):
         if show_vis_flag:
             print("studio.py: creating vis_tab (Plot tab)")
             self.vis_tab = Vis(self.nanohub_flag)
+            self.run_tab.vis_tab = self.vis_tab
             # self.vis_tab.setEnabled(False)
             # self.vis_tab.nanohub_flag = self.nanohub_flag
             # self.vis_tab.xml_root = self.xml_root

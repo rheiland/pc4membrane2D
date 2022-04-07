@@ -37,6 +37,8 @@ class Vis(QWidget):
         super().__init__()
         # global self.config_params
 
+        self.circle_radius = 100  # will be set in run_tab.py using the .xml
+
         self.nanohub_flag = nanohub_flag
 
         self.bgcolor = [1,1,1,1]  # all 1.0 for white 
@@ -974,12 +976,9 @@ class Vis(QWidget):
 
     #------------------------------------------------------------
     def plot_arc(self):
-        # circ_radius = 150.
-        circ_radius = 300.
-        circ_radius = 250.   # get from .xml user param
+        # circ_radius = 250.   # get from .xml user param
+        circ_radius = self.circle_radius
         xctr = 0.
-        # yctr = 130.
-        yctr = 200.
         yctr = circ_radius
         xlist = []
         ylist = []

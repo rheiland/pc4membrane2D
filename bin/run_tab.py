@@ -38,13 +38,14 @@ class RunModel(QWidget):
         # self.config_file = None
         self.tree = None
 
+        # these get set in studio.py
         self.config_tab = None
         self.microenv_tab = None
         self.celldef_tab = None
         self.user_params_tab = None
+        self.vis_tab = None
 
         #-----
-        self.vis_tab = None
         self.sim_output = QWidget()
 
         self.main_layout = QVBoxLayout()
@@ -129,6 +130,13 @@ class RunModel(QWidget):
         self.microenv_tab.fill_xml()
         self.celldef_tab.fill_xml()
         self.user_params_tab.fill_xml()
+
+        # self.vis_tab.circle_radius = ET.parse(self.xml_root)
+        # tree = ET.parse(xml_file)
+        # root = tree.getroot()
+        # rwh - warning: assumes "R_circle" name won't change
+        self.vis_tab.circle_radius = float(self.xml_root.find(".//user_parameters//R_circle").text)
+        print("\n\n------------- run_tab(): self.vis_tab.circle_radius = ",self.vis_tab.circle_radius)
         
     def message(self, s):
         self.text.appendPlainText(s)

@@ -235,8 +235,8 @@
 	</initial_conditions>
 	<user_parameters>
 		<num_cell_chunks type="int" units="" description="# of (large) cells">3</num_cell_chunks>
-		<num_subcell_layers type="int" units="" description="# of layers of subcells">8</num_subcell_layers>
-		<R_circle type="double" units="micron" description="circle radius (for membrane)">250</R_circle>
+		<num_subcell_layers type="int" units="" description="# of layers of subcells">2</num_subcell_layers>
+		<R_circle type="double" units="micron" description="circle radius (for membrane)">300</R_circle>
 		<theta_start type="double" units="degrees" description="start of membrane arc">225</theta_start>
 		<theta_stop type="double" units="degrees" description="start of membrane arc">315</theta_stop>
 		<mechanics_voxel_size type="double" units="micron"
