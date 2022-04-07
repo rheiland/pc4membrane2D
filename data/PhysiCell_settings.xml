@@ -14,7 +14,7 @@
 	</domain>
 	<overall>
 		<max_time
-			units="min">20</max_time>
+			units="min">60</max_time>
 		<time_units>min</time_units>
 		<space_units>micron</space_units>
 		<dt_diffusion
@@ -237,8 +237,8 @@
 		<num_cell_chunks type="int" units="" description="# of (large) cells">3</num_cell_chunks>
 		<num_subcell_layers type="int" units="" description="# of layers of subcells">2</num_subcell_layers>
 		<R_circle type="double" units="micron" description="circle radius (for membrane)">300</R_circle>
-		<theta_start type="double" units="degrees" description="start of membrane arc">225</theta_start>
-		<theta_stop type="double" units="degrees" description="start of membrane arc">315</theta_stop>
+		<theta_start type="double" units="degrees" description="start of membrane arc">240</theta_start>
+		<theta_stop type="double" units="degrees" description="start of membrane arc">300</theta_stop>
 		<mechanics_voxel_size type="double" units="micron"
 			description="edge length of mechanics voxel. Set ~2 x agent radius x max relative interaction distance (default: 30)">30</mechanics_voxel_size>
 		<random_seed type="int" units="dimensionless" description="">0</random_seed>

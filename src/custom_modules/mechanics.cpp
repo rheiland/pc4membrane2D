@@ -281,10 +281,11 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
     //   attach
     //===================================
 
-	if (PhysiCell_globals.current_time > 2)
-	{
-		phenotype.motility.is_motile = false;
-	}
+    // rwh: why??
+	// if (PhysiCell_globals.current_time > 2)
+	// {
+	// 	phenotype.motility.is_motile = false;
+	// }
 
 	if  (pCell->custom_data[attach_to_BM_i] == 1.0 )
 	{

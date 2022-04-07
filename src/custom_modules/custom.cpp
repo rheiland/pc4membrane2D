@@ -161,7 +161,29 @@ void setup_tissue( void )
 	double theta_stop = parameters.doubles("theta_stop");
 	theta_stop = theta_stop * twopi_val / 360.;  // radians
 
-	double cell_radius = 6.0;  // use cell volume to compute
+	double cell_radius = 6.0;  // use cell volume to compute (recall, V = 4/3 pi r^3; therefore, r = (V*3/4/pi)**1/3
+    // pugi::xml_document doc;
+    // pugi::xml_parse_result result = doc.load_string(source);
+    // doc.child("node").attribute("name").value();
+	pugi::xml_node node = physicell_config_root.child( "cell_definitions" ); 
+	if( !node )
+		std::cout << " cell_definitions not defd" << std::endl; 
+	node = node.child( "cell_definition" );   // epithelial
+	if( !node )
+		std::cout << " epi cell_def not defd" << std::endl; 
+	node = node.child( "phenotype" );
+	if( !node )
+		std::cout << " phenotype not defd" << std::endl; 
+	node = node.child( "volume" );
+	if( !node )
+		std::cout << " volume not defd" << std::endl; 
+    // std::cout << "\n\n------------ setup_tissue(): cell volume total (text)= " << node.child( "total" ).text() << std::endl;   // weird, = 1
+	double volume = node.child( "total" ).text().as_double();
+    std::cout << "\n\n------------ setup_tissue(): cell volume = " << volume << std::endl;
+	cell_radius = std::pow(volume * 3.0/4.0/3.14159, 0.333);  // use cell volume to compute (recall, V = 4/3 pi r^3; therefore, r = (V*3/4/pi)**1/3
+    std::cout << "------------ setup_tissue(): --> cell radius = " << cell_radius << std::endl;
+    // exit(-1);
+
 	double cell_diam = 2.0 * cell_radius;
 	double xctr = 0.0;
 	double yctr = R_circle;
