@@ -20,9 +20,9 @@
 		<dt_diffusion
 			units="min">0.01</dt_diffusion>
 		<dt_mechanics
-			units="min">0.1</dt_mechanics>
+			units="min">0.5</dt_mechanics>
 		<dt_phenotype
-			units="min">6</dt_phenotype>
+			units="min">1</dt_phenotype>
 	</overall>
 	<parallel>
 		<omp_num_threads>1</omp_num_threads>
@@ -212,7 +212,6 @@
 				</secretion>
 			</phenotype>
 			<custom_data>
-				<cell_ID>0.0</cell_ID>
 				<relative_adhesion_other_cell_types>1</relative_adhesion_other_cell_types>
 				<relative_adhesion_other_cells>0.3</relative_adhesion_other_cells>
 				<relative_maximum_membrane_adhesion_distance>0.3</relative_maximum_membrane_adhesion_distance>
@@ -224,6 +223,9 @@
 				<membrane_adhesion_factor>1</membrane_adhesion_factor>
 				<membrane_repulsion_factor>1</membrane_repulsion_factor>
 				<spring_break_push>-0.2</spring_break_push>
+				<cell_ID description="(internal use only)">0</cell_ID>
+				<xvec description="(internal use only)">0</xvec>
+				<yvec description="(internal use only)">0</yvec>
 			</custom_data>
 		</cell_definition>
 	</cell_definitions>
@@ -241,6 +243,7 @@
 		<theta_stop type="double" units="degrees" description="start of membrane arc">300</theta_stop>
 		<mechanics_voxel_size type="double" units="micron"
 			description="edge length of mechanics voxel. Set ~2 x agent radius x max relative interaction distance (default: 30)">30</mechanics_voxel_size>
+		<unit_test type="int" description="0,1, or 2">0</unit_test>
 		<random_seed type="int" units="dimensionless" description="">0</random_seed>
 	</user_parameters>
 </PhysiCell_settings>
