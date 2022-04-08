@@ -261,6 +261,8 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 	double adhesion_radius_half  = adhesion_radius / 2.0;
 
 	double signed_dist = circle_dist(pCell->position[0],pCell->position[1]);
+    // if (pCell->ID < 5)
+    //     std::cout << "~~~ pCell->ID, signed_dist = " << pCell->ID << ", " << signed_dist << std::endl;
 
 	// double displacement = signed_dist;
 	// double displacement = 1.0;
@@ -338,7 +340,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 			// if crosses the barrier, then zoom it back inside
 			pCell->custom_data[attach_to_BM_i] = 0.0;
 			pCell->custom_data[attach_time_i] = 0.0;
-			dv *= 1000;
+			// dv *= 1000;
             std::cout << "-- crossed barrier: zoom back in: dv=" << dv << std::endl;
 			axpy(&(pCell->velocity), dv , normal);
 			return;
@@ -346,20 +348,23 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 	}
 	if( pCell->custom_data[attach_to_BM_i] == 0.0 )  // not attached to BM
 	{
-        std::cout << "---> NOT attached to BM\n";
+        // std::cout << "---> NOT attached to BM\n";
         // if (displacement <= 0.0 && displacement > -adhesion_radius )
 		// if (displacement > -adhesion_radius )
 		if (signed_dist > -adhesion_radius )
         {
             pCell->custom_data[attach_to_BM_i] = 1.0;   // attached to BM now
             pCell->custom_data[attach_time_i] = 0.0;   // reset its time of being attached
+
 			// temp_r = displacement; // d
 			temp_r = signed_dist; // d
 			temp_r /= adhesion_radius; // d/R
-			temp_r += 1.0; // 1-d/R 
+
+			// temp_r += 1.0; // 1-d/R 
+			temp_r = 1.0 - temp_r; // rwh:  1-d/R 
 			temp_r *= temp_r; // (1-d/R)^2 
 			temp_r *= membrane_adhesion_factor;
-            std::cout << "-- signed_dist > -adhesion_radius (" << signed_dist <<", " << -adhesion_radius <<  "),  temp_r = " << temp_r << std::endl;
+            std::cout << "   signed_dist > -adhesion_radius (" << signed_dist <<", " << -adhesion_radius <<  "),  temp_r = " << temp_r << std::endl<< std::endl;
 			axpy(&(pCell->velocity), temp_r , normal);
         }
 	}
@@ -367,6 +372,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 	{
 		pCell->custom_data[attach_to_BM_i] = 0.0;
 		pCell->custom_data[attach_time_i] = 0.0;
+
 		// static int spring_break_push_index = pCell->custom_data.find_variable_index("spring_break_push");
 		double spring_break_push = pCell->custom_data[spring_break_push_index];
 		// due to spring linkage breaking, a push in opposite direction
