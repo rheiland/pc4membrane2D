@@ -241,6 +241,8 @@ print("ncells = ",ncells)
 
 filep.close()
 print("---> ",outfile)
+print(" REMINDER: the cell volume in .xml will need to reflect the cell_radius here.")
+print(" volume = ", 4./3. * np.pi * cell_radius**3)
 circles(cells_x,cells_y, s=cell_radius, c='r', ec='black', linewidth=0.1)
 plt.xlim(-260,260)
 plt.ylim(-260,260)
