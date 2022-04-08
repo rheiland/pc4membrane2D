@@ -204,16 +204,18 @@ void heterotypic_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double
 	std::vector<int>::iterator neighbor_voxel_index_end = 
 		pCell->get_container()->underlying_mesh.moore_connected_voxel_indices[pCell->get_current_mechanics_voxel_index()].end();
 
-	for( neighbor_voxel_index = 
+	for (neighbor_voxel_index = 
 		pCell->get_container()->underlying_mesh.moore_connected_voxel_indices[pCell->get_current_mechanics_voxel_index()].begin();
 		neighbor_voxel_index != neighbor_voxel_index_end; 
 		++neighbor_voxel_index )
+
 		// search for neighboring voxels, if the cell is on a voxel phase and in contact with neighboring voxel subcell
 	{
-		if(!is_neighbor_voxel(pCell, pCell->get_container()->underlying_mesh.voxels[pCell->get_current_mechanics_voxel_index()].center, pCell->get_container()->underlying_mesh.voxels[*neighbor_voxel_index].center, *neighbor_voxel_index))
+		if (!is_neighbor_voxel(pCell, pCell->get_container()->underlying_mesh.voxels[pCell->get_current_mechanics_voxel_index()].center, pCell->get_container()->underlying_mesh.voxels[*neighbor_voxel_index].center, *neighbor_voxel_index))
 			continue;
 		end = pCell->get_container()->agent_grid[*neighbor_voxel_index].end();
-		for(neighbor = pCell->get_container()->agent_grid[*neighbor_voxel_index].begin();neighbor != end; ++neighbor)
+
+		for (neighbor = pCell->get_container()->agent_grid[*neighbor_voxel_index].begin(); neighbor != end; ++neighbor)
 		{
 			// pCell->add_potentials(*neighbor);
 			// for each cell in neigboring voxel, add it's contribution to displacement and velocity
@@ -267,10 +269,19 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
     static double circle_x = 0.0;
 	double dx = pCell->position[0];
 	double dy = pCell->position[1] - R_circle;
+	bool inside = true;
+	if (fabs(dy) > R_circle)
+		inside = false;
+		// dx = -dx;
     double norm_denom = sqrt(dx*dx + dy*dy);
 	dx /= norm_denom;
 	dy /= norm_denom;
-	// std::cout << "------ t, dx, dy = " << PhysiCell_globals.current_time << ", " << dx << ", " << dy << std::endl;
+	if (!inside)
+	{
+		dy = -dy;
+		dx = -dx;
+	}
+	std::cout << "------ t, dx, dy = " << PhysiCell_globals.current_time << ", " << dx << ", " << dy << std::endl;
 
 	// rwh: save for plotting
 	pCell->custom_data[xvec_i] = dx;
