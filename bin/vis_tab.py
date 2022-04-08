@@ -975,6 +975,21 @@ class Vis(QWidget):
         # return collection
 
     #------------------------------------------------------------
+    def plot_mechanics_grid(self):
+        numx = int((self.xmax - self.xmin)/30)
+        numy = int((self.ymax - self.ymin)/30)
+        xs = np.linspace(self.xmin,self.xmax, numx)
+        ys = np.linspace(self.ymin,self.ymax, numy)
+        hlines = np.column_stack(np.broadcast_arrays(xs[0], ys, xs[-1], ys))
+        vlines = np.column_stack(np.broadcast_arrays(xs, ys[0], xs, ys[-1]))
+        grid_lines = np.concatenate([hlines, vlines]).reshape(-1, 2, 2)
+        line_collection = LineCollection(grid_lines, color="red", linewidths=0.5)
+        ax = plt.gca()
+        ax.add_collection(line_collection)
+        ax.set_xlim(xs[0], xs[-1])
+        ax.set_ylim(ys[0], ys[-1])
+
+    #------------------------------------------------------------
     def plot_arc(self):
         # circ_radius = 250.   # get from .xml user param
         circ_radius = self.circle_radius
@@ -1002,6 +1017,7 @@ class Vis(QWidget):
         # return
 
         self.plot_arc()  # rwh: "membrane"
+        self.plot_mechanics_grid()
 
         current_frame = frame
         fname = "snapshot%08d.svg" % frame
