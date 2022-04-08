@@ -228,7 +228,6 @@ class Config(QWidget):
         hbox.addWidget(label)
 
         self.folder = QLineEdit()
-        # self.num_threads.setFixedWidth(value_width)
         self.folder.setFixedWidth(domain_value_width)
         # self.folder.setValidator(QtGui.QTex())
         if self.nanohub_flag:
@@ -300,6 +299,45 @@ class Config(QWidget):
 
         self.vbox.addLayout(hbox)
 
+        #----------
+        hbox = QHBoxLayout()
+        label = QLabel("dt_mechanics")
+        label.setFixedWidth(label_width)
+        label.setAlignment(QtCore.Qt.AlignRight)
+        hbox.addWidget(label)
+
+        self.dt_mechanics_w = QLineEdit()
+        self.dt_mechanics_w.setFixedWidth(domain_value_width)
+        self.dt_mechanics_w.setValidator(QtGui.QDoubleValidator())
+        hbox.addWidget(self.dt_mechanics_w)
+
+        label = QLabel("   ")  # weird, but nicer layout
+        label.setFixedWidth(200)  # 70?
+        hbox.addWidget(label)
+        label = QLabel(" ")
+        label.setFixedWidth(200)
+        hbox.addWidget(label)
+        self.vbox.addLayout(hbox)
+        #----------
+        hbox = QHBoxLayout()
+        label = QLabel("dt_phenotype")
+        label.setFixedWidth(label_width)
+        label.setAlignment(QtCore.Qt.AlignRight)
+        hbox.addWidget(label)
+
+        self.dt_phenotype_w = QLineEdit()
+        self.dt_phenotype_w.setFixedWidth(domain_value_width)
+        self.dt_phenotype_w.setValidator(QtGui.QDoubleValidator())
+        hbox.addWidget(self.dt_phenotype_w)
+
+        label = QLabel("   ")  # weird, but nicer layout
+        label.setFixedWidth(200)  # 70?
+        hbox.addWidget(label)
+        label = QLabel(" ")
+        label.setFixedWidth(200)
+        hbox.addWidget(label)
+        self.vbox.addLayout(hbox)
+
         #============  Cells IC ================================
         label = QLabel("Initial conditions of cells (x,y,z, type)")
         label.setFixedHeight(label_height)
@@ -307,8 +345,9 @@ class Config(QWidget):
         label.setAlignment(QtCore.Qt.AlignCenter)
 
         self.vbox.addWidget(label)
-        self.cells_csv = QCheckBox("config/cells.csv")
-        self.cells_csv = QCheckBox("cells.csv")
+        # self.cells_csv = QCheckBox("config/cells.csv")
+        self.cells_csv = QCheckBox("cells.csv (disabled)")
+        self.cells_csv.setEnabled(False)
 
         self.vbox.addWidget(self.cells_csv)
 
@@ -370,6 +409,9 @@ class Config(QWidget):
         self.num_threads.setText(self.xml_root.find(".//omp_num_threads").text)
 
         self.folder.setText(self.xml_root.find(".//folder").text)
+
+        self.dt_mechanics_w.setText(self.xml_root.find(".//dt_mechanics").text)
+        self.dt_phenotype_w.setText(self.xml_root.find(".//dt_phenotype").text)
         
         self.svg_interval.setText(self.xml_root.find(".//SVG//interval").text)
         # NOTE: do this *after* filling the mcds_interval, directly above, due to the callback/constraints on them??
@@ -464,6 +506,9 @@ class Config(QWidget):
         self.xml_root.find(".//max_time").text = self.max_time.text()
         self.xml_root.find(".//omp_num_threads").text = self.num_threads.text()
         self.xml_root.find(".//folder").text = self.folder.text()
+
+        self.xml_root.find(".//dt_mechanics").text = self.dt_mechanics_w.text()
+        self.xml_root.find(".//dt_phenotype").text = self.dt_phenotype_w.text()
 
         if self.save_svg.isChecked():
             self.xml_root.find(".//SVG//enable").text = 'true'
