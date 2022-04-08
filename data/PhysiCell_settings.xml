@@ -20,7 +20,7 @@
 		<dt_diffusion
 			units="min">0.01</dt_diffusion>
 		<dt_mechanics
-			units="min">0.5</dt_mechanics>
+			units="min">0.1</dt_mechanics>
 		<dt_phenotype
 			units="min">1</dt_phenotype>
 	</overall>
