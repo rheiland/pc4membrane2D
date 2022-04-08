@@ -7,7 +7,7 @@ Compile the C++ model:
 cd src
 make
 
-# copy the executable to where the Studio wants it:
+# move the executable to where the Studio wants it:
 mv myproj ..
 
 # Change directory to the root dir and run the GUI from there
