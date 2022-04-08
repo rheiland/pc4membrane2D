@@ -253,6 +253,9 @@ class PhysiCellXMLCreator(QWidget):
 
         file_menu.addAction("Reset", self.reset_xml_root)
 
+        file_menu.addAction("Toggle mechanics grid", self.toggle_mechanics_grid)
+        file_menu.addAction("Toggle vectors", self.toggle_vectors)
+
         self.download_menu = file_menu.addMenu('Download')
         self.download_config_item = self.download_menu.addAction("Download config.xml", self.download_config_cb)
         self.download_svg_item = self.download_menu.addAction("Download SVG", self.download_svg_cb)
@@ -396,6 +399,14 @@ class PhysiCellXMLCreator(QWidget):
     #     # self.microenv_tab.fill_gui(self.xml_root)  # microenv
     #     # self.celldef_tab.fill_gui("foobar")  # cell defs
     #     # self.celldef_tab.fill_motility_substrates()
+
+    def toggle_mechanics_grid(self):
+        self.vis_tab.show_grid = not self.vis_tab.show_grid
+        self.vis_tab.update_plots()
+
+    def toggle_vectors(self):
+        self.vis_tab.show_vectors = not self.vis_tab.show_vectors
+        self.vis_tab.update_plots()
 
     def save_as_cb(self):
         # save_as_file = QFileDialog.getSaveFileName(self,'',".")

@@ -21,6 +21,7 @@ from PyQt5.QtWidgets import QFrame,QApplication,QWidget,QTabWidget,QFormLayout,Q
 
 import numpy as np
 import scipy.io
+from pyMCDS_cells import pyMCDS_cells 
 import matplotlib
 matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
@@ -80,6 +81,9 @@ class Vis(QWidget):
         self.y_range = self.ymax - self.ymin
 
         self.aspect_ratio = 0.7
+
+        self.show_grid = False
+        self.show_vectors = False
 
         self.show_nucleus = False
         # self.show_edge = False
@@ -975,6 +979,48 @@ class Vis(QWidget):
         # return collection
 
     #------------------------------------------------------------
+    def plot_vecs(self):
+        # global current_frame
+
+        fname = "output%08d.xml" % self.current_svg_frame
+        # print("plot_vecs(): fname = ",fname)
+        # full_fname = os.path.join(self.output_dir, fname)
+        # mcds=pyMCDS_cells("output00000049.xml")
+        try:
+            # mcds = pyMCDS_cells(fname)
+            # print("plot_vecs(): self.output_dir= ",self.output_dir)
+            mcds = pyMCDS_cells(fname, self.output_dir)
+            # print(mcds.get_cell_variables())
+
+            xpos = mcds.data['discrete_cells']['position_x']
+            ypos = mcds.data['discrete_cells']['position_y']
+            # print("------- plot_vecs(): xpos=", xpos)
+
+            xvec = mcds.data['discrete_cells']['xvec']
+            yvec = mcds.data['discrete_cells']['yvec']
+            # # print("------- plot_vecs(): xvals=", mcds.data['discrete_cells']['position_x'])
+            # # print("------- plot_vecs(): yvals=", mcds.data['discrete_cells']['position_y'])
+            # # print("------- plot_vecs(): xvec=", mcds.data['discrete_cells']['xvec'])
+            # # print("------- plot_vecs(): yvec=", mcds.data['discrete_cells']['yvec'])
+
+            # # lines = [[(0, 1), (1, 1)], [(2, 3), (3, 3)], [(1, 2), (1, 3)]]
+            sfact = 30
+            vlines = []
+            for idx in range(len(xpos)):
+                x0 = xpos[idx]
+                y0 = ypos[idx]
+                x1 = xpos[idx] + xvec[idx]*sfact
+                y1 = ypos[idx] + yvec[idx]*sfact
+                vlines.append( [(x0,y0), (x1,y1)] )
+            # print("vlines = ",vlines)
+            ax = plt.gca()
+            line_collection = LineCollection(vlines, color="black", linewidths=0.5)
+            ax.add_collection(line_collection)
+        except:
+            print("plot_vecs(): ERROR")
+            pass
+
+    #------------------------------------------------------------
     def plot_mechanics_grid(self):
         numx = int((self.xmax - self.xmin)/30)
         numy = int((self.ymax - self.ymin)/30)
@@ -986,8 +1032,8 @@ class Vis(QWidget):
         line_collection = LineCollection(grid_lines, color="red", linewidths=0.5)
         ax = plt.gca()
         ax.add_collection(line_collection)
-        ax.set_xlim(xs[0], xs[-1])
-        ax.set_ylim(ys[0], ys[-1])
+        # ax.set_xlim(xs[0], xs[-1])
+        # ax.set_ylim(ys[0], ys[-1])
 
     #------------------------------------------------------------
     def plot_arc(self):
@@ -1012,14 +1058,20 @@ class Vis(QWidget):
     # def plot_svg(self, frame, rdel=''):
     def plot_svg(self, frame):
         # global current_idx, axes_max
-        global current_frame
+        # global current_frame
 
         # return
 
         self.plot_arc()  # rwh: "membrane"
-        self.plot_mechanics_grid()
 
-        current_frame = frame
+        if self.show_grid:
+            self.plot_mechanics_grid()
+
+        if self.show_vectors:
+            self.plot_vecs()
+
+        # current_frame = frame
+        # self.current_frame = frame
         fname = "snapshot%08d.svg" % frame
         full_fname = os.path.join(self.output_dir, fname)
         # try:
@@ -1277,7 +1329,7 @@ class Vis(QWidget):
     #------------------------------------------------------------
     def plot_substrate(self, frame):
         # global current_idx, axes_max
-        global current_frame
+        # global current_frame
 
         xml_file_root = "output%08d.xml" % frame
         xml_file = os.path.join(self.output_dir, xml_file_root)
