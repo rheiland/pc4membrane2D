@@ -271,14 +271,10 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
     static double circle_x = 0.0;
 	double dx = pCell->position[0];
 	double dy = pCell->position[1] - R_circle;
-	bool inside = true;
-	if (fabs(dy) > R_circle)
-		inside = false;
-		// dx = -dx;
     double norm_denom = sqrt(dx*dx + dy*dy);
 	dx /= norm_denom;
 	dy /= norm_denom;
-	if (!inside)
+	if (norm_denom > R_circle)
 	{
 		dy = -dy;
 		dx = -dx;
