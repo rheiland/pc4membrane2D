@@ -77,7 +77,7 @@ void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt 
 // specialized potential function 
 void add_heterotypic_potentials(Cell* my_cell , Cell* other_agent)
 {
-	static int nCellID = my_cell->custom_data.find_variable_index( "cell_ID" ); 
+	static int nCellID = my_cell->custom_data.find_variable_index( "cell_ID" );   // cell blob ID (not subcell's)
 	
 	// if( this->ID == other_agent->ID )
 	if( my_cell == other_agent )
@@ -247,6 +247,9 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
     static int attach_time_i = pCell->custom_data.find_variable_index( "attach_time" ); 
     static int attach_to_BM_i = pCell->custom_data.find_variable_index( "attach_to_BM" ); 
 
+	static int xvec_i = pCell->custom_data.find_variable_index("xvec");
+	static int yvec_i = pCell->custom_data.find_variable_index("yvec");
+
     double adhesion_radius = phenotype.geometry.radius * relative_maximum_membrane_adhesion_distance;
     int ncells_attached = 0;
 	double temp_r;
@@ -267,6 +270,11 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
     double norm_denom = sqrt(dx*dx + dy*dy);
 	dx /= norm_denom;
 	dy /= norm_denom;
+	// std::cout << "------ t, dx, dy = " << PhysiCell_globals.current_time << ", " << dx << ", " << dy << std::endl;
+
+	// rwh: save for plotting
+	pCell->custom_data[xvec_i] = dx;
+	pCell->custom_data[yvec_i] = dy;
 
 	// double dx = nx - pCell->position[0];
 	// double dy = ny - pCell->position[1];
