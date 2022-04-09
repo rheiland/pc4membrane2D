@@ -255,6 +255,7 @@ class PhysiCellXMLCreator(QWidget):
 
         file_menu.addAction("Toggle mechanics grid", self.toggle_mechanics_grid)
         file_menu.addAction("Toggle vectors", self.toggle_vectors)
+        file_menu.addAction("Toggle adhesion circle", self.toggle_membrane_adhesion_arc)
 
         self.download_menu = file_menu.addMenu('Download')
         self.download_config_item = self.download_menu.addAction("Download config.xml", self.download_config_cb)
@@ -406,6 +407,10 @@ class PhysiCellXMLCreator(QWidget):
 
     def toggle_vectors(self):
         self.vis_tab.show_vectors = not self.vis_tab.show_vectors
+        self.vis_tab.update_plots()
+
+    def toggle_membrane_adhesion_arc(self):
+        self.vis_tab.show_membrane_adhesion_arc = not self.vis_tab.show_membrane_adhesion_arc
         self.vis_tab.update_plots()
 
     def save_as_cb(self):

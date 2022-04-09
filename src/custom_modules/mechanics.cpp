@@ -251,8 +251,11 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 
 	static int xvec_i = pCell->custom_data.find_variable_index("xvec");
 	static int yvec_i = pCell->custom_data.find_variable_index("yvec");
+	static int membrane_adhesion_dist_i = pCell->custom_data.find_variable_index("membrane_adhesion_dist");
 
     double adhesion_radius = phenotype.geometry.radius * relative_maximum_membrane_adhesion_distance;
+	pCell->custom_data[membrane_adhesion_dist_i] = adhesion_radius;
+
     int ncells_attached = 0;
 	double temp_r;
 	double temp_a;
@@ -344,7 +347,8 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 	}
 	if( pCell->custom_data[attach_to_BM_i] == 0.0 )  // not attached to BM
 	{
-        // std::cout << "---> NOT attached to BM\n";
+        std::cout << "---> NOT attached to BM\n";
+		std::cout << "signed_dist, -adhesion_radius(=c_rad*rel_max_memb_adhes) (" << signed_dist <<", " << -adhesion_radius << std::endl;
         // if (displacement <= 0.0 && displacement > -adhesion_radius )
 		// if (displacement > -adhesion_radius )
 		if (signed_dist > -adhesion_radius )
@@ -360,8 +364,9 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 			temp_r = 1.0 - temp_r; // rwh:  1-d/R 
 			temp_r *= temp_r; // (1-d/R)^2 
 			temp_r *= membrane_adhesion_factor;
-            std::cout << "   signed_dist > -adhesion_radius (" << signed_dist <<", " << -adhesion_radius <<  "),  temp_r = " << temp_r << std::endl<< std::endl;
+            std::cout << "   signed_dist > -adhesion_radius "  << std::endl<< std::endl;
 			axpy(&(pCell->velocity), temp_r , normal);
+			std::cout << "   velocity (x,y)= " << pCell->velocity[0] <<", " << pCell->velocity[1] <<  std::endl<< std::endl;
         }
 	}
 	if (pCell->custom_data[attach_to_BM_i] == 1.0 && pCell->custom_data[attach_time_i] > pCell->custom_data[attach_lifetime_i])

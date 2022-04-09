@@ -84,6 +84,7 @@ class Vis(QWidget):
 
         self.show_grid = False
         self.show_vectors = False
+        self.show_membrane_adhesion_arc = False
 
         self.show_nucleus = False
         # self.show_edge = False
@@ -1036,6 +1037,29 @@ class Vis(QWidget):
         # ax.set_ylim(ys[0], ys[-1])
 
     #------------------------------------------------------------
+    def plot_membrane_adhesion_arc(self):
+        # global current_frame
+
+        fname = "output%08d.xml" % self.current_svg_frame
+        # print("plot_vecs(): fname = ",fname)
+        # full_fname = os.path.join(self.output_dir, fname)
+        # mcds=pyMCDS_cells("output00000049.xml")
+        try:
+            # mcds = pyMCDS_cells(fname)
+            # print("plot_vecs(): self.output_dir= ",self.output_dir)
+            mcds = pyMCDS_cells(fname, self.output_dir)
+            # print(mcds.get_cell_variables())
+            adhesion_radius = self.circle_radius - mcds.data['discrete_cells']['membrane_adhesion_dist'][0] 
+            # print("plot_membrane_adhesion_arc(): mcds.data['discrete_cells']['membrane_adhesion_dist']= ",mcds.data['discrete_cells']['membrane_adhesion_dist'])
+            # print("plot_membrane_adhesion_arc(): adhesion_radius= ",adhesion_radius)
+            adhesion_circle = plt.Circle((0, self.circle_radius), adhesion_radius, color='r',fill=False)
+            # ax.add_artist(Circle((0, self.circle_radius), adhesion_radius, color='r'))
+            ax = plt.gca()
+            ax.add_artist(adhesion_circle)
+        except:
+            print("plot_membrane_adhesion_arc(): ERROR")
+            pass
+    #------------------------------------------------------------
     def plot_arc(self):
         # circ_radius = 250.   # get from .xml user param
         circ_radius = self.circle_radius
@@ -1069,6 +1093,9 @@ class Vis(QWidget):
 
         if self.show_vectors:
             self.plot_vecs()
+
+        if self.show_membrane_adhesion_arc:
+            self.plot_membrane_adhesion_arc()
 
         # current_frame = frame
         # self.current_frame = frame

@@ -14,7 +14,7 @@
 	</domain>
 	<overall>
 		<max_time
-			units="min">40</max_time>
+			units="min">60</max_time>
 		<time_units>min</time_units>
 		<space_units>micron</space_units>
 		<dt_diffusion
@@ -183,11 +183,11 @@
 					</options>
 				</mechanics>
 				<motility>
-					<speed>0</speed>
+					<speed>1</speed>
 					<persistence_time>1</persistence_time>
 					<migration_bias>.5</migration_bias>
 					<options>
-						<enabled>false</enabled>
+						<enabled>true</enabled>
 						<enabled>false</enabled>
 						<use_2D>true</use_2D>
 						<chemotaxis>
@@ -212,21 +212,20 @@
 				</secretion>
 			</phenotype>
 			<custom_data>
-				<relative_adhesion_other_cell_types>0</relative_adhesion_other_cell_types>
-				<relative_adhesion_other_cells>0</relative_adhesion_other_cells>
-				<relative_maximum_membrane_adhesion_distance>2</relative_maximum_membrane_adhesion_distance>
+				<relative_adhesion_other_cell_types>1</relative_adhesion_other_cell_types>
+				<relative_adhesion_other_cells>0.3</relative_adhesion_other_cells>
+				<relative_maximum_membrane_adhesion_distance>0.3</relative_maximum_membrane_adhesion_distance>
 				<attach_lifetime units="min">1.0</attach_lifetime> 
 				<attach_time units="min">0.0</attach_time> 
 				<attach_to_BM units="dimensionless">0.0</attach_to_BM> 
-				<subcell_adhesion_factor>0</subcell_adhesion_factor>
-				<subcell_repulsion_factor>0</subcell_repulsion_factor>
+				<subcell_adhesion_factor>1</subcell_adhesion_factor>
+				<subcell_repulsion_factor>1</subcell_repulsion_factor>
 				<membrane_adhesion_factor>1</membrane_adhesion_factor>
-				<membrane_repulsion_factor>0</membrane_repulsion_factor>
-				<spring_break_push>0</spring_break_push>
+				<membrane_repulsion_factor>1</membrane_repulsion_factor>
+				<spring_break_push>-0.2</spring_break_push>
 				<cell_ID description="(internal use only)">0</cell_ID>
 				<xvec description="(internal use only)">0</xvec>
 				<yvec description="(internal use only)">0</yvec>
-				<membrane_adhesion_dist description="(internal use only)">12</membrane_adhesion_dist>
 			</custom_data>
 		</cell_definition>
 	</cell_definitions>
