@@ -144,7 +144,7 @@ void add_heterotypic_potentials(Cell* my_cell , Cell* other_agent)
 	
 	//////////////////////////////////////////////////////////////////
 	
-	// Adhesive
+	// Adhesion
 	double max_interactive_distance = my_cell->phenotype.mechanics.relative_maximum_adhesion_distance * my_cell->phenotype.geometry.radius + 
 		(*other_agent).phenotype.mechanics.relative_maximum_adhesion_distance * (*other_agent).phenotype.geometry.radius;
 		
@@ -237,17 +237,17 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 {
 	static int membrane_repulsion_factor_index = pCell->custom_data.find_variable_index("membrane_repulsion_factor");
 	static int membrane_adhesion_factor_index = pCell->custom_data.find_variable_index("membrane_adhesion_factor");
-	static int relative_maximum_membrane_adhesion_distance_index = pCell->custom_data.find_variable_index("relative_maximum_membrane_adhesion_distance");
+	static int rel_max_membrane_adhesion_dist_i = pCell->custom_data.find_variable_index("rel_max_membrane_adhesion_dist");
 
 	static int spring_break_push_index = pCell->custom_data.find_variable_index("spring_break_push");
 
 	double membrane_repulsion_factor = pCell->custom_data[membrane_repulsion_factor_index];
 	double membrane_adhesion_factor = pCell->custom_data[membrane_adhesion_factor_index];
-	double relative_maximum_membrane_adhesion_distance = pCell->custom_data[relative_maximum_membrane_adhesion_distance_index];
+	double relative_maximum_membrane_adhesion_distance = pCell->custom_data[rel_max_membrane_adhesion_dist_i];
 
     static int attach_lifetime_i = pCell->custom_data.find_variable_index( "attach_lifetime" ); 
     static int attach_time_i = pCell->custom_data.find_variable_index( "attach_time" ); 
-    static int attach_to_BM_i = pCell->custom_data.find_variable_index( "attach_to_BM" ); 
+    static int attached_to_BM_i = pCell->custom_data.find_variable_index( "attached_to_BM" ); 
 
 	static int xvec_i = pCell->custom_data.find_variable_index("xvec");
 	static int yvec_i = pCell->custom_data.find_variable_index("yvec");
@@ -304,7 +304,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 	// 	phenotype.motility.is_motile = false;
 	// }
 
-	if  (pCell->custom_data[attach_to_BM_i] == 1.0 )
+	if  (pCell->custom_data[attached_to_BM_i] == 1.0 )
 	{
         std::cout << "-----> attached to BM\n";
 		// if (displacement < 0) 
@@ -337,7 +337,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 		else 
 		{
 			// if crosses the barrier, then zoom it back inside
-			pCell->custom_data[attach_to_BM_i] = 0.0;
+			pCell->custom_data[attached_to_BM_i] = 0.0;
 			pCell->custom_data[attach_time_i] = 0.0;
 			// dv *= 1000;
             std::cout << "-- crossed barrier: zoom back in: dv=" << dv << std::endl;
@@ -345,7 +345,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 			return;
 		}
 	}
-	if( pCell->custom_data[attach_to_BM_i] == 0.0 )  // not attached to BM
+	if( pCell->custom_data[attached_to_BM_i] == 0.0 )  // not attached to BM
 	{
         std::cout << "---> NOT attached to BM\n";
 		std::cout << "signed_dist, -adhesion_radius(=c_rad*rel_max_memb_adhes) (" << signed_dist <<", " << -adhesion_radius << std::endl;
@@ -353,7 +353,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 		// if (displacement > -adhesion_radius )
 		if (signed_dist > -adhesion_radius )
         {
-            pCell->custom_data[attach_to_BM_i] = 1.0;   // attached to BM now
+            pCell->custom_data[attached_to_BM_i] = 1.0;   // attached to BM now
             pCell->custom_data[attach_time_i] = 0.0;   // reset its time of being attached
 
 			// temp_r = displacement; // d
@@ -369,9 +369,9 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 			std::cout << "   velocity (x,y)= " << pCell->velocity[0] <<", " << pCell->velocity[1] <<  std::endl<< std::endl;
         }
 	}
-	if (pCell->custom_data[attach_to_BM_i] == 1.0 && pCell->custom_data[attach_time_i] > pCell->custom_data[attach_lifetime_i])
+	if (pCell->custom_data[attached_to_BM_i] == 1.0 && pCell->custom_data[attach_time_i] > pCell->custom_data[attach_lifetime_i])
 	{
-		pCell->custom_data[attach_to_BM_i] = 0.0;
+		pCell->custom_data[attached_to_BM_i] = 0.0;
 		pCell->custom_data[attach_time_i] = 0.0;
 
 		// static int spring_break_push_index = pCell->custom_data.find_variable_index("spring_break_push");

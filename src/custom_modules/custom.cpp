@@ -147,9 +147,17 @@ void setup_microenvironment( void )
 
 void setup_tissue( void )
 {
-	static int nCellID = cell_defaults.custom_data.find_variable_index( "cell_ID" ); 
+	static int nCellID = cell_defaults.custom_data.find_variable_index( "cell_ID" );   // cell blob ID
+
 
 	Cell_Definition* pCD = cell_definitions_by_name["epithelial"]; 
+
+	int membrane_adhesion_dist_i = pCD->custom_data.find_variable_index("membrane_adhesion_dist");
+	int rel_max_membrane_adhesion_dist_i = pCD->custom_data.find_variable_index("rel_max_membrane_adhesion_dist");
+
+	double relative_maximum_membrane_adhesion_distance = pCD->custom_data[rel_max_membrane_adhesion_dist_i];
+	double adhesion_radius = pCD->phenotype.geometry.radius * relative_maximum_membrane_adhesion_distance;
+
 
 	int num_cell_chunks = parameters.ints("num_cell_chunks");
 	int num_subcell_layers = parameters.ints("num_subcell_layers");
@@ -161,37 +169,41 @@ void setup_tissue( void )
 	double theta_stop = parameters.doubles("theta_stop");
 	theta_stop = theta_stop * twopi_val / 360.;  // radians
 
-	double cell_radius = 6.0;  // use cell volume to compute (recall, V = 4/3 pi r^3; therefore, r = (V*3/4/pi)**1/3
-    // pugi::xml_document doc;
-    // pugi::xml_parse_result result = doc.load_string(source);
-    // doc.child("node").attribute("name").value();
-	pugi::xml_node node = physicell_config_root.child( "cell_definitions" ); 
-	if( !node )
-		std::cout << " cell_definitions not defd" << std::endl; 
-	node = node.child( "cell_definition" );   // epithelial
-	if( !node )
-		std::cout << " epi cell_def not defd" << std::endl; 
-	node = node.child( "phenotype" );
-	if( !node )
-		std::cout << " phenotype not defd" << std::endl; 
-	node = node.child( "volume" );
-	if( !node )
-		std::cout << " volume not defd" << std::endl; 
-    // std::cout << "\n\n------------ setup_tissue(): cell volume total (text)= " << node.child( "total" ).text() << std::endl;   // weird, = 1
-	double volume = node.child( "total" ).text().as_double();
-    std::cout << "\n\n------------ setup_tissue(): cell volume = " << volume << std::endl;
-	cell_radius = std::pow(volume * 3.0/4.0/3.14159, 0.333);  // use cell volume to compute (recall, V = 4/3 pi r^3; therefore, r = (V*3/4/pi)**1/3
-    std::cout << "------------ setup_tissue(): --> cell radius = " << cell_radius << std::endl;
-    // exit(-1);
-
+	double cell_radius = pCD->phenotype.geometry.radius;
 	double cell_diam = 2.0 * cell_radius;
-	double xctr = 0.0;
-	double yctr = R_circle;
 
 	double circum = twopi_val * R_circle ;
 	int ncells_circle = circum / cell_diam;
 
 
+	// ----------- create a hex-blob away from the membrane 
+	double blob_delta = twopi_val / 6.0;
+	double xctr = -100.0;
+	double yctr = 100.0;
+	double zv = 0.0;
+	double rval = cell_diam;
+	// std::cout << xctr << ", " << yctr << ", " << zv << ""
+	int blob_id = 201;
+	double xv = xctr;
+	double yv = yctr;
+	Cell* pCell = create_cell( *pCD ); 
+	pCell->assign_position( xv,yv, 0.0 ); 
+	pCell->custom_data[nCellID] = blob_id; 
+
+	for (double tval=0; tval <= twopi_val; tval+=blob_delta)
+	{
+		double xv = xctr + rval * std::cos(tval);
+		double yv = yctr + rval * std::sin(tval);
+
+		Cell* pCell = create_cell( *pCD ); 
+		pCell->assign_position( xv,yv, 0.0 ); 
+		pCell->custom_data[nCellID] = blob_id; 
+	}
+
+
+	// ----------- create a band of cells near membrane
+	xctr = 0.0;
+	yctr = R_circle;
 	std::vector<double> position = {0,0,0}; 
 	position[2] = 0.0; 
 	Cell* pC;
@@ -206,6 +218,7 @@ void setup_tissue( void )
 	// 	pC->custom_data[nCellID] = float(my_ID); 
 	// }
 
+
 	for (int nlayer=0; nlayer < num_subcell_layers; nlayer++)
 	{
 		// print("------- layer ",nlayer)
@@ -213,9 +226,10 @@ void setup_tissue( void )
 		ncells_circle = circum / cell_diam;
 		double theta_del = twopi_val / ncells_circle;
 		// print("theta_del (cells)= ",theta_del);
-		double rval = R_circle - cell_diam;
+		rval = R_circle - cell_diam;
 		// print("theta0, theta1 = ",theta0,theta1);
 		double theta_chunk_del = (theta_stop - theta_start) / num_cell_chunks;
+
 		for (double tval=theta_start; tval <= theta_stop; tval+=theta_del)
 		{
 			double xv = xctr + rval * std::cos(tval);
@@ -230,6 +244,10 @@ void setup_tissue( void )
 			pCell->assign_position( xv,yv, 0.0 ); 
 			pCell->custom_data[nCellID] = chunk_id; 
 
+			// double relative_maximum_membrane_adhesion_distance = pCell->custom_data[relative_maximum_membrane_adhesion_distance_i];
+			// double adhesion_radius = pCell->phenotype.geometry.radius * relative_maximum_membrane_adhesion_distance;
+			pCell->custom_data[membrane_adhesion_dist_i] = adhesion_radius;
+
 			// # print(xval_offset,',',yval,',0.0, 2, 101')  # x,y,z, cell type, [sub]cell ID
 			// # filep.write(f"{cells_x[ipt]},{cells_y[ipt]}, 0.0, {cell_type}, {cell_id}\n")
 			// filep.write(f"{xv},{yv}, 0.0, {cell_type}, {cell_id}\n")
@@ -240,6 +258,9 @@ void setup_tissue( void )
 		else
 			theta_stop -= theta_del/2;
 	}
+
+	// add any additional cells
+	// load_subcells_from_pugixml(); 	
 
 // 		int my_type = (int) data[3]; 
 // 		int my_ID = (int) data[4];
@@ -451,8 +472,10 @@ void pheno_update( Cell* pCell , Phenotype& phenotype , double dt )
 
 std::vector<std::string> paint_by_number_cell_coloring_wrapped( Cell* pCell )
 {
+	static int nCellID = cell_defaults.custom_data.find_variable_index( "cell_ID" );   // cell blob ID
 	static std::vector< std::string > colors(0); 
 	static bool setup_done = false; 
+
 	if( setup_done == false )
 	{
 		colors.push_back( "grey" ); // default color will be grey 
@@ -490,7 +513,6 @@ std::vector<std::string> paint_by_number_cell_coloring_wrapped( Cell* pCell )
 	
 	// modular arithmetic  
 	// int type = (int) ( ((unsigned int) pCell->type) % 13 ); 
-	static int nCellID = cell_defaults.custom_data.find_variable_index( "cell_ID" ); 
 	// int agent_type = pCell->type % number_of_colors; 
 	int agent_type = (int) (pCell->custom_data[nCellID]) % number_of_colors; 
 	

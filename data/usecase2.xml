@@ -139,7 +139,7 @@
             <persistence_time>1</persistence_time>
             <migration_bias>0</migration_bias>
             <options>
-              <enabled>true</enabled>
+              <enabled>false</enabled>
               <use_2D>true</use_2D>
               <chemotaxis>
                 <enabled>false</enabled>

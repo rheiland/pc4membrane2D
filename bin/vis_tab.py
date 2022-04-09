@@ -39,6 +39,7 @@ class Vis(QWidget):
         # global self.config_params
 
         self.circle_radius = 100  # will be set in run_tab.py using the .xml
+        self.mech_voxel_size = 30
 
         self.nanohub_flag = nanohub_flag
 
@@ -1023,14 +1024,14 @@ class Vis(QWidget):
 
     #------------------------------------------------------------
     def plot_mechanics_grid(self):
-        numx = int((self.xmax - self.xmin)/30)
-        numy = int((self.ymax - self.ymin)/30)
+        numx = int((self.xmax - self.xmin)/self.mech_voxel_size)
+        numy = int((self.ymax - self.ymin)/self.mech_voxel_size)
         xs = np.linspace(self.xmin,self.xmax, numx)
         ys = np.linspace(self.ymin,self.ymax, numy)
         hlines = np.column_stack(np.broadcast_arrays(xs[0], ys, xs[-1], ys))
         vlines = np.column_stack(np.broadcast_arrays(xs, ys[0], xs, ys[-1]))
         grid_lines = np.concatenate([hlines, vlines]).reshape(-1, 2, 2)
-        line_collection = LineCollection(grid_lines, color="red", linewidths=0.5)
+        line_collection = LineCollection(grid_lines, color="gray", linewidths=0.5)
         ax = plt.gca()
         ax.add_collection(line_collection)
         # ax.set_xlim(xs[0], xs[-1])
@@ -1052,7 +1053,7 @@ class Vis(QWidget):
             adhesion_radius = self.circle_radius - mcds.data['discrete_cells']['membrane_adhesion_dist'][0] 
             # print("plot_membrane_adhesion_arc(): mcds.data['discrete_cells']['membrane_adhesion_dist']= ",mcds.data['discrete_cells']['membrane_adhesion_dist'])
             # print("plot_membrane_adhesion_arc(): adhesion_radius= ",adhesion_radius)
-            adhesion_circle = plt.Circle((0, self.circle_radius), adhesion_radius, color='r',fill=False)
+            adhesion_circle = plt.Circle((0, self.circle_radius), adhesion_radius, color='r',fill=False,lw=0.3)
             # ax.add_artist(Circle((0, self.circle_radius), adhesion_radius, color='r'))
             ax = plt.gca()
             ax.add_artist(adhesion_circle)

@@ -139,7 +139,7 @@
             <persistence_time>1</persistence_time>
             <migration_bias>0</migration_bias>
             <options>
-              <enabled>true</enabled>
+              <enabled>false</enabled>
               <use_2D>true</use_2D>
               <chemotaxis>
                 <enabled>false</enabled>
@@ -164,8 +164,8 @@
           <relative_adhesion_other_cells units="" description="">0</relative_adhesion_other_cells>
           <rel_max_membrane_adhesion_dist units="" description="">3</rel_max_membrane_adhesion_dist>
           <attach_lifetime units="min" description="">1.0</attach_lifetime>
-          <subcell_adhesion_factor units="" description="">1.5</subcell_adhesion_factor>
-          <subcell_repulsion_factor units="" description="">1</subcell_repulsion_factor>
+          <subcell_adhesion_factor units="" description="">0</subcell_adhesion_factor>
+          <subcell_repulsion_factor units="" description="">0</subcell_repulsion_factor>
           <membrane_adhesion_factor units="" description="">1</membrane_adhesion_factor>
           <membrane_repulsion_factor units="" description="">0</membrane_repulsion_factor>
           <spring_break_push units="" description="">0</spring_break_push>

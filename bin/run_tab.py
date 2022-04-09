@@ -136,7 +136,9 @@ class RunModel(QWidget):
         # root = tree.getroot()
         # rwh - warning: assumes "R_circle" name won't change
         self.vis_tab.circle_radius = float(self.xml_root.find(".//user_parameters//R_circle").text)
+        self.vis_tab.mech_voxel_size = float(self.xml_root.find(".//user_parameters//mechanics_voxel_size").text)
         print("\n\n------------- run_tab(): self.vis_tab.circle_radius = ",self.vis_tab.circle_radius)
+        print("\n\n------------- run_tab(): self.vis_tab.mech_voxel_size = ",self.vis_tab.mech_voxel_size)
         
     def message(self, s):
         self.text.appendPlainText(s)
