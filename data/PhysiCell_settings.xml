@@ -160,7 +160,6 @@
 
           </phenotype>
         <custom_data>
-          <relative_adhesion_other_cell_types units="" description="">0</relative_adhesion_other_cell_types>
           <relative_adhesion_other_cells units="" description="">0</relative_adhesion_other_cells>
           <rel_max_membrane_adhesion_dist units="" description="">3</rel_max_membrane_adhesion_dist>
           <attach_lifetime units="min" description="">1.0</attach_lifetime>
