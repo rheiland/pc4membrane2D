@@ -59,8 +59,8 @@ class Vis(QWidget):
         self.num_contours = 15
         self.num_contours = 25
         self.num_contours = 50
-        self.fontsize = 9
-        self.title_fontsize = 10
+        self.fontsize = 4
+        self.title_fontsize = 6
 
         self.plot_svg_flag = True
         # self.plot_svg_flag = False
