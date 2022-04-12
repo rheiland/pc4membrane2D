@@ -160,14 +160,122 @@
 
           </phenotype>
         <custom_data>
-          <relative_adhesion_other_cells units="" description="">0</relative_adhesion_other_cells>
-          <rel_max_membrane_adhesion_dist units="" description="">3</rel_max_membrane_adhesion_dist>
-          <attach_lifetime units="min" description="">1.0</attach_lifetime>
-          <subcell_adhesion_factor units="" description="">1.5</subcell_adhesion_factor>
-          <subcell_repulsion_factor units="" description="">1</subcell_repulsion_factor>
-          <membrane_adhesion_factor units="" description="">3</membrane_adhesion_factor>
-          <membrane_repulsion_factor units="" description="">2</membrane_repulsion_factor>
-          <spring_break_push units="" description="">0</spring_break_push>
+          <relative_adhesion_other_cells units="" description="Adhesion between 2 cells">0</relative_adhesion_other_cells>
+          <rel_max_membrane_adhesion_dist units="" description="Event horizon distance factor">3</rel_max_membrane_adhesion_dist>
+          <attach_lifetime units="min" description="Duration for a cell being attached to membrane">1.0</attach_lifetime>
+          <subcell_adhesion_factor units="" description="Multiplication factor for subcell adhesion">1.5</subcell_adhesion_factor>
+          <subcell_repulsion_factor units="" description="Multiplication factor for subcell repulsion">1</subcell_repulsion_factor>
+          <membrane_adhesion_factor units="" description="Multiplication factor for membrane adhesion">3</membrane_adhesion_factor>
+          <membrane_repulsion_factor units="" description="Multiplication factor for membrane repulsion">2</membrane_repulsion_factor>
+          <spring_break_push units="" description="Spring break repulsion factor">0</spring_break_push>
+          <attached_to_BM units="dimensionless" description="(internal use only)">0.0</attached_to_BM>
+          <attach_time units="min" description="(internal use only)">0.0</attach_time>
+          <cell_ID units="" description="(internal use only)">0</cell_ID>
+          <xvec units="" description="(internal use only)">0</xvec>
+          <yvec units="" description="(internal use only)">0</yvec>
+          <membrane_adhesion_dist units="" description="(internal use only)">12</membrane_adhesion_dist>
+        </custom_data>
+          </cell_definition>
+
+		<cell_definition name="other" ID="1">
+        <phenotype>
+          <cycle code="6" name="Flow cytometry model (separated)">
+            <phase_durations units="min">
+              <duration index="0" fixed_duration="true">9e9</duration>
+              <duration index="1" fixed_duration="true">480</duration>
+              <duration index="2" fixed_duration="true">240</duration>
+              <duration index="3" fixed_duration="true">60</duration>
+            </phase_durations>
+            </cycle>
+
+          <death>
+            <model code="100" name="apoptosis">
+              <death_rate units="1/min">0</death_rate>
+              <phase_durations units="min">
+                <duration index="0" fixed_duration="true">516</duration>
+              </phase_durations>
+              <parameters>
+                <unlysed_fluid_change_rate units="1/min">0.05</unlysed_fluid_change_rate>
+                <lysed_fluid_change_rate units="1/min">0</lysed_fluid_change_rate>
+                <cytoplasmic_biomass_change_rate units="1/min">1.66667e-02</cytoplasmic_biomass_change_rate>
+                <nuclear_biomass_change_rate units="1/min">5.83333e-03</nuclear_biomass_change_rate>
+                <calcification_rate units="1/min">0</calcification_rate>
+                <relative_rupture_volume units="dimensionless">2.0</relative_rupture_volume>
+              </parameters>
+            </model>
+            <model code="101" name="necrosis">
+              <death_rate units="1/min">0.0</death_rate>
+              <phase_durations units="min">
+                <duration index="0" fixed_duration="true">0</duration>
+              <duration index="1" fixed_duration="true">0</duration>
+              </phase_durations>
+              <parameters>
+                <unlysed_fluid_change_rate units="1/min">0.05</unlysed_fluid_change_rate>
+                <lysed_fluid_change_rate units="1/min">0</lysed_fluid_change_rate>
+                <cytoplasmic_biomass_change_rate units="1/min">1.66667e-02</cytoplasmic_biomass_change_rate>
+                <nuclear_biomass_change_rate units="1/min">5.83333e-03</nuclear_biomass_change_rate>
+                <calcification_rate units="1/min">0</calcification_rate>
+                <relative_rupture_volume units="dimensionless">2.0</relative_rupture_volume>
+              </parameters>
+            </model>
+          </death>
+
+          <volume>
+            <total>904</total>
+            <fluid_fraction>0.75</fluid_fraction>
+            <nuclear>0</nuclear>
+            <fluid_change_rate>0.05</fluid_change_rate>
+            <cytoplasmic_biomass_change_rate>0.0045</cytoplasmic_biomass_change_rate>
+            <nuclear_biomass_change_rate>0.0055</nuclear_biomass_change_rate>
+            <calcified_fraction>0</calcified_fraction>
+            <calcification_rate>0</calcification_rate>
+            <relative_rupture_volume>2.0</relative_rupture_volume>
+          </volume>
+
+          <mechanics>
+            <cell_cell_adhesion_strength units="micron/min">0.4</cell_cell_adhesion_strength>
+            <cell_cell_repulsion_strength units="micron/min">10.0</cell_cell_repulsion_strength>
+            <relative_maximum_adhesion_distance units="dimensionless">2.5</relative_maximum_adhesion_distance>
+            <options>
+              <set_relative_equilibrium_distance enabled="false" units="dimensionless">1.8</set_relative_equilibrium_distance>
+              <set_absolute_equilibrium_distance enabled="false" units="micron">15.12</set_absolute_equilibrium_distance>
+            </options>
+          </mechanics>
+
+          <motility>
+            <speed>0.5</speed>
+            <persistence_time>1</persistence_time>
+            <migration_bias>0</migration_bias>
+            <options>
+              <enabled>true</enabled>
+              <use_2D>true</use_2D>
+              <chemotaxis>
+                <enabled>false</enabled>
+                <substrate>oxygen</substrate>
+                <direction>1</direction>
+              </chemotaxis>
+            </options>
+          </motility>
+
+          <secretion>
+            <substrate name="oxygen">
+              <secretion_rate units="1/min">0</secretion_rate>
+              <secretion_target units="substrate density">1</secretion_target>
+              <uptake_rate units="1/min">0.01</uptake_rate>
+              <net_export_rate units="total substrate/min">0</net_export_rate>
+            </substrate>
+            </secretion>
+
+          </phenotype>
+        <custom_data>
+          <relative_adhesion_other_cells units="" description="Adhesion between 2 cells">0</relative_adhesion_other_cells>
+          <rel_max_membrane_adhesion_dist units="" description="Event horizon distance factor">3</rel_max_membrane_adhesion_dist>
+          <attach_lifetime units="min" description="Duration for a cell being attached to membrane">1.0</attach_lifetime>
+          <subcell_adhesion_factor units="" description="Multiplication factor for subcell adhesion">1.5</subcell_adhesion_factor>
+          <subcell_repulsion_factor units="" description="Multiplication factor for subcell repulsion">1</subcell_repulsion_factor>
+          <membrane_adhesion_factor units="" description="Multiplication factor for membrane adhesion">3</membrane_adhesion_factor>
+          <membrane_repulsion_factor units="" description="Multiplication factor for membrane repulsion">2</membrane_repulsion_factor>
+          <spring_break_push units="" description="Spring break repulsion factor">0</spring_break_push>
           <attached_to_BM units="dimensionless" description="(internal use only)">0.0</attached_to_BM>
           <attach_time units="min" description="(internal use only)">0.0</attach_time>
           <cell_ID units="" description="(internal use only)">0</cell_ID>

@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 # import xml.etree.ElementTree as ET  # https://docs.python.org/2/library/xml.etree.elementtree.html
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QFrame,QApplication,QWidget,QTabWidget,QFormLayout,QLineEdit, QHBoxLayout,QVBoxLayout,QRadioButton,QLabel,QCheckBox,QComboBox,QScrollArea, QTextEdit
+from PyQt5.QtWidgets import QFrame,QApplication,QWidget,QTabWidget,QFormLayout,QLineEdit, QHBoxLayout,QVBoxLayout,QRadioButton,QLabel,QCheckBox,QComboBox,QScrollArea, QTextEdit,QTextBrowser
 
 class QHLine(QFrame):
     def __init__(self):
@@ -41,7 +41,16 @@ class About(QWidget):
 
         self.scroll = QScrollArea()  # might contain centralWidget
 
-        self.text = QTextEdit()
+        # self.text = QTextEdit()
+        self.text = QTextBrowser()
+        # self.text.setTextInteractionFlags(textInteractionFlags() | Qt::LinksAccessibleByMouse)
+        # self.text.setAcceptRichText(True)
+        # self.text.setHtml("<nobr> </nobr>")
+        self.text.setHtml("&nbsp;")
+        # self.text.setPlainText(True)
+        self.text.setOpenExternalLinks(True)
+        self.text.setOpenLinks(True)
+
         # self.text.setPlainText("Hello, world")
         # doc_dir = os.path.abspath('doc')
         # # html_file = Path(doc_dir,"about.html")

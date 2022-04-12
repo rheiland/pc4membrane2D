@@ -59,8 +59,8 @@ class Vis(QWidget):
         self.num_contours = 15
         self.num_contours = 25
         self.num_contours = 50
-        self.fontsize = 4
-        self.title_fontsize = 6
+        self.fontsize = 9
+        self.title_fontsize = 10
 
         self.plot_svg_flag = True
         # self.plot_svg_flag = False
@@ -85,7 +85,7 @@ class Vis(QWidget):
 
         self.show_grid = False
         self.show_vectors = False
-        self.show_membrane_adhesion_arc = False
+        self.show_event_horizon = False
 
         self.show_nucleus = False
         # self.show_edge = False
@@ -221,7 +221,7 @@ class Vis(QWidget):
 
         self.substrates_checkbox = QCheckBox('Substrates')
         self.substrates_checkbox.setChecked(False)
-        self.substrates_checkbox.setEnabled(False)
+        # self.substrates_checkbox.setEnabled(False)
         self.substrates_checkbox.clicked.connect(self.substrates_toggle_cb)
         self.substrates_checked_flag = False
         self.glayout1.addWidget(self.substrates_checkbox, 0,7,1,2) # w, row, column, rowspan, colspan
@@ -497,10 +497,16 @@ class Vis(QWidget):
 
     def update_plots(self):
         self.ax0.cla()
-        if self.substrates_checked_flag:
+        if self.substrates_checked_flag:  # do first so cells are plotted on top
             self.plot_substrate(self.current_svg_frame)
         if self.cells_checked_flag:
             self.plot_svg(self.current_svg_frame)
+
+        # self.plot_arc()  # rwh: "membrane"
+        # if self.show_grid:
+        #     self.plot_mechanics_grid()
+        # if self.show_event_horizon:
+        #     self.plot_event_horizon()
 
         self.canvas.update()
         self.canvas.draw()
@@ -1015,9 +1021,9 @@ class Vis(QWidget):
                 y1 = ypos[idx] + yvec[idx]*sfact
                 vlines.append( [(x0,y0), (x1,y1)] )
             # print("vlines = ",vlines)
-            ax = plt.gca()
-            line_collection = LineCollection(vlines, color="black", linewidths=0.5)
-            ax.add_collection(line_collection)
+            # ax = plt.gca()
+            self.line_collection = LineCollection(vlines, color="black", linewidths=0.5)
+            self.ax0.add_collection(self.line_collection)
         except:
             print("plot_vecs(): ERROR")
             pass
@@ -1032,13 +1038,14 @@ class Vis(QWidget):
         vlines = np.column_stack(np.broadcast_arrays(xs, ys[0], xs, ys[-1]))
         grid_lines = np.concatenate([hlines, vlines]).reshape(-1, 2, 2)
         line_collection = LineCollection(grid_lines, color="gray", linewidths=0.5)
-        ax = plt.gca()
-        ax.add_collection(line_collection)
+        # ax = plt.gca()
+        # ax.add_collection(line_collection)
+        self.ax0.add_collection(line_collection)
         # ax.set_xlim(xs[0], xs[-1])
         # ax.set_ylim(ys[0], ys[-1])
 
     #------------------------------------------------------------
-    def plot_membrane_adhesion_arc(self):
+    def plot_event_horizon(self):
         # global current_frame
 
         fname = "output%08d.xml" % self.current_svg_frame
@@ -1051,14 +1058,18 @@ class Vis(QWidget):
             mcds = pyMCDS_cells(fname, self.output_dir)
             # print(mcds.get_cell_variables())
             adhesion_radius = self.circle_radius - mcds.data['discrete_cells']['membrane_adhesion_dist'][0] 
-            # print("plot_membrane_adhesion_arc(): mcds.data['discrete_cells']['membrane_adhesion_dist']= ",mcds.data['discrete_cells']['membrane_adhesion_dist'])
-            # print("plot_membrane_adhesion_arc(): adhesion_radius= ",adhesion_radius)
-            adhesion_circle = plt.Circle((0, self.circle_radius), adhesion_radius, color='r',fill=False,lw=0.3)
+            # print("plot_event_horizon(): mcds.data['discrete_cells']['membrane_adhesion_dist']= ",mcds.data['discrete_cells']['membrane_adhesion_dist'])
+            # print("plot_event_horizon(): adhesion_radius= ",adhesion_radius)
+
+            # adhesion_circle = plt.Circle((0, self.circle_radius), adhesion_radius, color='r',fill=False,lw=0.6)
+            self.adhesion_circle = plt.Circle((0, self.circle_radius), adhesion_radius, color='r',fill=False,lw=0.6)
             # ax.add_artist(Circle((0, self.circle_radius), adhesion_radius, color='r'))
-            ax = plt.gca()
-            ax.add_artist(adhesion_circle)
+
+            # ax = plt.gca()
+            # ax.add_artist(self.adhesion_circle)
+            self.ax0.add_artist(self.adhesion_circle)
         except:
-            print("plot_membrane_adhesion_arc(): ERROR")
+            print("plot_event_horizon(): ERROR")
             pass
     #------------------------------------------------------------
     def plot_arc(self):
@@ -1095,8 +1106,8 @@ class Vis(QWidget):
         if self.show_vectors:
             self.plot_vecs()
 
-        if self.show_membrane_adhesion_arc:
-            self.plot_membrane_adhesion_arc()
+        if self.show_event_horizon:
+            self.plot_event_horizon()
 
         # current_frame = frame
         # self.current_frame = frame
@@ -1356,6 +1367,172 @@ class Vis(QWidget):
 
     #------------------------------------------------------------
     def plot_substrate(self, frame):
+        # global current_idx, axes_max
+        global current_frame
+
+        xml_file_root = "output%08d.xml" % frame
+        xml_file = os.path.join(self.output_dir, xml_file_root)
+        if not Path(xml_file).is_file():
+            print("ERROR: file not found",xml_file)
+            return
+
+        # xml_file = os.path.join(self.output_dir, xml_file_root)
+        tree = ET.parse(xml_file)
+        root = tree.getroot()
+    #    print('time=' + root.find(".//current_time").text)
+        mins = float(root.find(".//current_time").text)
+        hrs = int(mins/60)
+        days = int(hrs/24)
+        self.title_str = '%d days, %d hrs, %d mins' % (days,hrs-days*24, mins-hrs*60)
+        print(self.title_str)
+
+        fname = "output%08d_microenvironment0.mat" % frame
+        full_fname = os.path.join(self.output_dir, fname)
+        print("\n    ==>>>>> plot_substrate(): full_fname=",full_fname)
+        if not Path(full_fname).is_file():
+            print("ERROR: file not found",full_fname)
+            return
+
+        info_dict = {}
+        scipy.io.loadmat(full_fname, info_dict)
+        M = info_dict['multiscale_microenvironment']
+        print('plot_substrate: self.field_index=',self.field_index)
+
+        # debug
+        # fsub = M[self.field_index,:]   # 
+        # print("substrate min,max=",fsub.min(), fsub.max())
+
+        print("M.shape = ",M.shape)  # e.g.,  (6, 421875)  (where 421875=75*75*75)
+        # numx = int(M.shape[1] ** (1./3) + 1)
+        # numy = numx
+        # self.numx = 50  # for template model
+        # self.numy = 50
+        # self.numx = 88  # for kidney model
+        # self.numy = 75
+        try:
+            print("self.numx, self.numy = ",self.numx, self.numy )
+        except:
+            print("Error: self.numx, self.numy not defined.")
+            return
+        # nxny = numx * numy
+
+        try:
+            xgrid = M[0, :].reshape(self.numy, self.numx)
+            ygrid = M[1, :].reshape(self.numy, self.numx)
+        except:
+            print("error: cannot reshape ",self.numy, self.numx," for array ",M.shape)
+            return
+
+        zvals = M[self.field_index,:].reshape(self.numy,self.numx)
+        print("zvals.min() = ",zvals.min())
+        print("zvals.max() = ",zvals.max())
+
+        # self.num_contours = 15
+
+        # if (self.colormap_fixed_toggle.value):
+        #     try:
+        #         # vmin = 0
+        #         # vmax = 10
+        #         # levels = MaxNLocator(nbins=30).tick_values(vmin, vmax)
+        #         num_contours = 15
+        #         levels = MaxNLocator(nbins=num_contours).tick_values(self.colormap_min.value, self.colormap_max.value)
+        #         substrate_plot = self.ax0.contourf(xgrid, ygrid, M[self.field_index, :].reshape(self.numy, self.numx), levels=levels, extend='both', cmap=self.colormap_dd.value, fontsize=self.fontsize)
+        #     except:
+        #         contour_ok = False
+        #         # print('got error on contourf 1.')
+        # else:    
+        #     try:
+        #         substrate_plot = self.ax0.contourf(xgrid, ygrid, M[self.field_index, :].reshape(self.numy,self.numx), num_contours, cmap=self.colormap_dd.value)
+        #     except:
+        #         contour_ok = False
+        #             # print('got error on contourf 2.')
+
+        contour_ok = True
+        # if (self.colormap_fixed_toggle.value):
+        # self.field_index = 4
+
+        if (self.fix_cmap_flag):
+            try:
+                # self.fixed_contour_levels = MaxNLocator(nbins=self.num_contours).tick_values(self.cmin_value, self.cmax_value)
+                # substrate_plot = self.ax0.contourf(xgrid, ygrid, M[self.field_index, :].reshape(self.numy, self.numx), levels=levels, extend='both', cmap=self.colormap_dd.value, fontsize=self.fontsize)
+                substrate_plot = self.ax0.contourf(xgrid, ygrid, zvals, self.num_contours, levels=self.fixed_contour_levels, extend='both', cmap='viridis')
+            except:
+                contour_ok = False
+                print('got error on contourf with fixed cmap range.')
+        else:    
+            try:
+                substrate_plot = self.ax0.contourf(xgrid, ygrid, zvals, self.num_contours, cmap='viridis')  # self.colormap_dd.value)
+            except:
+                contour_ok = False
+                print('got error on contourf with dynamic cmap range.')
+
+        # in case we want to plot a "0.0" contour line
+        # if self.field_index > 4:
+        #     self.ax0.contour(xgrid, ygrid, M[self.field_index, :].reshape(self.numy,self.numx), [0.0], linewidths=0.5)
+
+        # Do this funky stuff to prevent the colorbar from shrinking in height with each redraw.
+        # Except it doesn't seem to work when we use fixed ranges on the colorbar?!
+        print("# axes = ",len(self.figure.axes))
+        if len(self.figure.axes) > 1: 
+            pts = self.figure.axes[-1].get_position().get_points()
+            print("type(pts) = ",type(pts))
+            # pts = [[0.78375, 0.11][0.81037234, 0.88]]
+            pts = np.array([[0.78375, 0.11],[0.81037234, 0.88]])
+
+            print("figure.axes pts = ",pts)
+            label = self.figure.axes[-1].get_ylabel()
+            self.figure.axes[-1].remove()  # replace/update the colorbar
+            cax = self.figure.add_axes([pts[0][0],pts[0][1],pts[1][0]-pts[0][0],pts[1][1]-pts[0][1]  ])
+            self.cbar = self.figure.colorbar(substrate_plot, cax=cax)
+            self.cbar.ax.set_ylabel(label)
+            self.cbar.ax.tick_params(labelsize=self.fontsize)
+
+            # unfortunately the aspect is different between the initial call to colorbar 
+            #   without cax argument. Try to reset it (but still it's somehow different)
+            # self.cbar.ax.set_aspect(20)
+        else:
+            # plt.colorbar(im)
+            self.figure.colorbar(substrate_plot)
+
+        # if (False):
+        #     try:
+        #         substrate_plot = self.ax0.contourf(xgrid, ygrid, M[self.field_index, :].reshape(self.numy, self.numx), levels=levels, extend='both', cmap=self.colormap_dd.value, fontsize=self.fontsize)
+        #     except:
+        #         contour_ok = False
+        #         print('---------got error on contourf 1.')
+        # else:    
+        #     try:
+        #         substrate_plot = self.ax0.contourf(xgrid, ygrid, M[self.field_index, :].reshape(self.numy,self.numx), num_contours, cmap='viridis')  # self.colormap_dd.value)
+        #     except:
+        #         contour_ok = False
+        #         print('---------got error on contourf 2.')
+
+        self.ax0.set_title(self.title_str, fontsize=self.title_fontsize)
+
+        # if (contour_ok):
+        # if (True):
+        #     self.fontsize = 20
+        #     self.ax0.set_title(self.title_str, fontsize=self.fontsize)
+        #     cbar = self.figure.colorbar(substrate_plot, ax=self.ax0)
+        #     cbar.ax.tick_params(labelsize=self.fontsize)
+
+        self.ax0.set_xlim(self.plot_xmin, self.plot_xmax)
+        # self.ax0.set_xlim(-450, self.xmax)
+
+        self.ax0.set_ylim(self.plot_ymin, self.plot_ymax)
+        # self.ax0.set_ylim(0.0, self.ymax)
+        # self.ax0.clf()
+        # self.aspect_ratio = 1.2
+        # ratio_default=(self.ax0.get_xlim()[1]-self.ax0.get_xlim()[0])/(self.ax0.get_ylim()[1]-self.ax0.get_ylim()[0])
+        # ratio_default = (self.plot_xmax - self.plot_xmin) / (self.plot_ymax - self.plot_ymin)
+        # print("ratio_default = ",ratio_default)
+        # self.ax0.set_aspect(ratio_default * self.aspect_ratio)
+        self.ax0.set_aspect(1.0)
+
+        # self.ax0.set_aspect(self.plot_ymin, self.plot_ymax)
+
+    #------------------------------------------------------------
+    def plot_substrate_old(self, frame):
         # global current_idx, axes_max
         # global current_frame
 

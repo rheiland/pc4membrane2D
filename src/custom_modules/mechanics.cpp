@@ -14,6 +14,7 @@ double circle_dist(double ptx, double pty)
 
 void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 {
+    static bool debug_print = false;
 	// Use this for homogenous attachment
 	// BM adhesion 
 		// is it time to detach (attachment lifetime)
@@ -77,6 +78,7 @@ void epithelial_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt 
 // specialized potential function 
 void add_heterotypic_potentials(Cell* my_cell , Cell* other_agent)
 {
+    static bool debug_print = false;
 	static int nCellID = my_cell->custom_data.find_variable_index( "cell_ID" );   // cell blob ID (not subcell's)
 	
 	// if( this->ID == other_agent->ID )
@@ -184,6 +186,7 @@ void add_heterotypic_potentials(Cell* my_cell , Cell* other_agent)
 
 void heterotypic_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double dt)
 {
+    static bool debug_print = false;
 	if( pCell->functions.add_cell_basement_membrane_interactions )
 	{
 		pCell->functions.add_cell_basement_membrane_interactions(pCell, phenotype,dt);
@@ -235,6 +238,7 @@ void BM_special_mechanics( Cell* pCell, Phenotype& phenotype, double dt )
 
 void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double dt )
 {
+    static bool debug_print = false;
 	static int membrane_repulsion_factor_index = pCell->custom_data.find_variable_index("membrane_repulsion_factor");
 	static int membrane_adhesion_factor_index = pCell->custom_data.find_variable_index("membrane_adhesion_factor");
 	static int rel_max_membrane_adhesion_dist_i = pCell->custom_data.find_variable_index("rel_max_membrane_adhesion_dist");
@@ -306,18 +310,18 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 
 	if  (pCell->custom_data[attached_to_BM_i] == 1.0 )
 	{
-        std::cout << "-----> attached to BM\n";
+        if (debug_print) std::cout << "-----> attached to BM\n";
 		// if (displacement < 0) 
 		if (signed_dist < 0) 
 		{	
-            std::cout << "-- signed_dist < 0: " << signed_dist << std::endl;
+            if (debug_print) std::cout << "-- signed_dist < 0: " << signed_dist << std::endl;
 			// temp_a = displacement; // d
 			temp_a = signed_dist; // d
 			temp_a /= adhesion_radius; // d/Ra
 			temp_a += 1.0; // 1-d/Ra
 			temp_a *= temp_a; // (1-d/Ra)^2 
 			temp_a *= membrane_adhesion_factor;
-            std::cout << "    temp_a = " << temp_a << std::endl;
+            if (debug_print) std::cout << "    temp_a = " << temp_a << std::endl;
 
             // if (displacement > -R ) // repulsion
 			if (signed_dist > -adhesion_radius_half ) // repulsion
@@ -330,7 +334,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 				temp_r *= temp_r; // (1-d/R)^2 
 				temp_r *= membrane_repulsion_factor;
 				temp_a -= temp_r;
-                std::cout << "(signed_dist > -adhesion_radius_half)  temp_a = " << temp_a << std::endl;
+                if (debug_print) std::cout << "(signed_dist > -adhesion_radius_half)  temp_a = " << temp_a << std::endl;
 			}
 			axpy(&(pCell->velocity), temp_a , normal);
 		}
@@ -340,15 +344,15 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 			pCell->custom_data[attached_to_BM_i] = 0.0;
 			pCell->custom_data[attach_time_i] = 0.0;
 			// dv *= 1000;
-            std::cout << "-- crossed barrier: zoom back in: dv=" << dv << std::endl;
+            if (debug_print) std::cout << "-- crossed barrier: zoom back in: dv=" << dv << std::endl;
 			axpy(&(pCell->velocity), dv , normal);
 			return;
 		}
 	}
 	if( pCell->custom_data[attached_to_BM_i] == 0.0 )  // not attached to BM
 	{
-        std::cout << "---> NOT attached to BM\n";
-		std::cout << "signed_dist, -adhesion_radius(=c_rad*rel_max_memb_adhes) (" << signed_dist <<", " << -adhesion_radius << std::endl;
+        if (debug_print) std::cout << "---> NOT attached to BM\n";
+		if (debug_print) std::cout << "signed_dist, -adhesion_radius(=c_rad*rel_max_memb_adhes) (" << signed_dist <<", " << -adhesion_radius << std::endl;
         // if (displacement <= 0.0 && displacement > -adhesion_radius )
 		// if (displacement > -adhesion_radius )
 		if (signed_dist > -adhesion_radius )
@@ -364,9 +368,9 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 			temp_r = 1.0 - temp_r; // rwh:  1-d/R 
 			temp_r *= temp_r; // (1-d/R)^2 
 			temp_r *= membrane_adhesion_factor;
-            std::cout << "   signed_dist > -adhesion_radius "  << std::endl<< std::endl;
+            if (debug_print) std::cout << "   signed_dist > -adhesion_radius "  << std::endl<< std::endl;
 			axpy(&(pCell->velocity), temp_r , normal);
-			std::cout << "   velocity (x,y)= " << pCell->velocity[0] <<", " << pCell->velocity[1] <<  std::endl<< std::endl;
+			if (debug_print) std::cout << "   velocity (x,y)= " << pCell->velocity[0] <<", " << pCell->velocity[1] <<  std::endl<< std::endl;
         }
 	}
 	if (pCell->custom_data[attached_to_BM_i] == 1.0 && pCell->custom_data[attach_time_i] > pCell->custom_data[attach_lifetime_i])
@@ -377,7 +381,7 @@ void custom_cell_update_mechanics( Cell* pCell , Phenotype& phenotype , double d
 		// static int spring_break_push_index = pCell->custom_data.find_variable_index("spring_break_push");
 		double spring_break_push = pCell->custom_data[spring_break_push_index];
 		// due to spring linkage breaking, a push in opposite direction
-        std::cout << "-- attached to BM and attach_time >attach_lifetime: spring_break_push= " << spring_break_push << std::endl;
+        if (debug_print) std::cout << "-- attached to BM and attach_time >attach_lifetime: spring_break_push= " << spring_break_push << std::endl;
 		axpy(&(pCell->velocity), spring_break_push , normal);
 		return;
 	}

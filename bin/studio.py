@@ -259,7 +259,7 @@ class PhysiCellXMLCreator(QWidget):
 
         file_menu.addAction("Toggle mechanics grid", self.toggle_mechanics_grid)
         file_menu.addAction("Toggle vectors", self.toggle_vectors)
-        file_menu.addAction("Toggle event horizon", self.toggle_membrane_adhesion_arc)
+        file_menu.addAction("Toggle event horizon", self.toggle_event_horizon)
 
         self.download_menu = file_menu.addMenu('Download')
         self.download_config_item = self.download_menu.addAction("Download config.xml", self.download_config_cb)
@@ -413,8 +413,9 @@ class PhysiCellXMLCreator(QWidget):
         self.vis_tab.show_vectors = not self.vis_tab.show_vectors
         self.vis_tab.update_plots()
 
-    def toggle_membrane_adhesion_arc(self):
-        self.vis_tab.show_membrane_adhesion_arc = not self.vis_tab.show_membrane_adhesion_arc
+    def toggle_event_horizon(self):
+        self.vis_tab.show_event_horizon = not self.vis_tab.show_event_horizon
+        print("studio.py: vis_tab.show_event_horizon = ",self.vis_tab.show_event_horizon)
         self.vis_tab.update_plots()
 
     def save_as_cb(self):
