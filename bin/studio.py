@@ -25,6 +25,7 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QProcess
 
+from about_tab import About
 from config_tab import Config
 from cell_def_tab import CellDef 
 from microenv_tab import SubstrateDef 
@@ -139,6 +140,8 @@ class PhysiCellXMLCreator(QWidget):
         # self.num_models = 0
         # self.model = {}  # key: name, value:[read-only, tree]
 
+        self.about_tab = About(self.nanohub_flag)
+
         self.config_tab = Config(self.nanohub_flag)
         self.config_tab.xml_root = self.xml_root
         self.config_tab.fill_gui()
@@ -205,6 +208,7 @@ class PhysiCellXMLCreator(QWidget):
             QTabBar::tab:selected {background: orange;}   #  dodgerblue
             """
         self.tabWidget.setStyleSheet(stylesheet)
+        self.tabWidget.addTab(self.about_tab,"About")
         self.tabWidget.addTab(self.config_tab,"Config Basics")
         self.tabWidget.addTab(self.microenv_tab,"Microenvironment")
         self.tabWidget.addTab(self.celldef_tab,"Cell Types")
@@ -242,7 +246,7 @@ class PhysiCellXMLCreator(QWidget):
             self.tabWidget.setCurrentIndex(0)  # Config (default)
 
     def enablePlotTab(self, bval):
-        self.tabWidget.setTabEnabled(5, bval)
+        self.tabWidget.setTabEnabled(6, bval)
 
     def menu(self):
         menubar = QMenuBar(self)
@@ -255,7 +259,7 @@ class PhysiCellXMLCreator(QWidget):
 
         file_menu.addAction("Toggle mechanics grid", self.toggle_mechanics_grid)
         file_menu.addAction("Toggle vectors", self.toggle_vectors)
-        file_menu.addAction("Toggle adhesion circle", self.toggle_membrane_adhesion_arc)
+        file_menu.addAction("Toggle event horizon", self.toggle_membrane_adhesion_arc)
 
         self.download_menu = file_menu.addMenu('Download')
         self.download_config_item = self.download_menu.addAction("Download config.xml", self.download_config_cb)

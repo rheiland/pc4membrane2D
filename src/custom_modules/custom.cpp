@@ -176,34 +176,37 @@ void setup_tissue( void )
 	int ncells_circle = circum / cell_diam;
 
 
-	// ----------- create a hex-blob away from the membrane 
+	// ----------- create hex-blobs away from the membrane 
 	double blob_delta = twopi_val / 6.0;
-	double xctr = -100.0;
-	double yctr = 100.0;
 	double zv = 0.0;
 	double rval = cell_diam;
 	// std::cout << xctr << ", " << yctr << ", " << zv << ""
-	int blob_id = 201;
-	double xv = xctr;
-	double yv = yctr;
-	Cell* pCell = create_cell( *pCD ); 
-	pCell->assign_position( xv,yv, 0.0 ); 
-	pCell->custom_data[nCellID] = blob_id; 
 
-	for (double tval=0; tval <= twopi_val; tval+=blob_delta)
+	std::vector<double> xctr = {-100, 50, -50, 120, 0};
+	std::vector<double> yctr = { 100,150, 80, 120, 180};
+	int blob_id = 200;
+	for (int idx=0; idx < xctr.size(); idx++)
 	{
-		double xv = xctr + rval * std::cos(tval);
-		double yv = yctr + rval * std::sin(tval);
-
+		double xv = xctr[idx];
+		double yv = yctr[idx];
 		Cell* pCell = create_cell( *pCD ); 
 		pCell->assign_position( xv,yv, 0.0 ); 
-		pCell->custom_data[nCellID] = blob_id; 
+		pCell->custom_data[nCellID] = blob_id + idx; 
+		for (double tval=0; tval <= twopi_val; tval+=blob_delta)
+		{
+			double xv = xctr[idx] + rval * std::cos(tval);
+			double yv = yctr[idx] + rval * std::sin(tval);
+
+			Cell* pCell = create_cell( *pCD ); 
+			pCell->assign_position( xv,yv, 0.0 ); 
+			pCell->custom_data[nCellID] = blob_id + idx; 
+		}
 	}
 
 
 	// ----------- create a band of cells near membrane
-	xctr = 0.0;
-	yctr = R_circle;
+	double xctr0 = 0.0;
+	double yctr0 = R_circle;
 	std::vector<double> position = {0,0,0}; 
 	position[2] = 0.0; 
 	Cell* pC;
@@ -232,8 +235,8 @@ void setup_tissue( void )
 
 		for (double tval=theta_start; tval <= theta_stop; tval+=theta_del)
 		{
-			double xv = xctr + rval * std::cos(tval);
-			double yv = yctr + rval * std::sin(tval);
+			double xv = xctr0 + rval * std::cos(tval);
+			double yv = yctr0 + rval * std::sin(tval);
 			// cells_x = np.append(cells_x, xv);
 			// cells_y = np.append(cells_y, yv);
 			// ncells += 1;
