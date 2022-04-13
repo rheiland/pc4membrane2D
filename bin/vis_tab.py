@@ -482,7 +482,7 @@ class Vis(QWidget):
             pass
 
     def change_plot_range(self):
-        print("----- change_plot_range:")
+        # print("\n----- change_plot_range:")
         # print("----- my_xmin= ",self.my_xmin.text())
         # print("----- my_xmax= ",self.my_xmax.text())
         try:  # due to the initial callback
@@ -512,8 +512,8 @@ class Vis(QWidget):
         self.canvas.draw()
 
     def fill_substrates_combobox(self, substrate_list):
-        print("vis_tab.py: ------- fill_substrates_combobox")
-        print("substrate_list = ",substrate_list )
+        # print("vis_tab.py: ------- fill_substrates_combobox")
+        # print("substrate_list = ",substrate_list )
         self.substrates_combobox.clear()
         idx = 0
         for s in substrate_list:
@@ -524,12 +524,12 @@ class Vis(QWidget):
             # self.field_min_max[s][1] = 1
             # self.field_min_max[s][2] = False
             idx += 1
-        print('field_dict= ',self.field_dict)
-        print('field_min_max= ',self.field_min_max)
+        # print('field_dict= ',self.field_dict)
+        # print('field_min_max= ',self.field_min_max)
         # self.substrates_combobox.setCurrentIndex(2)  # not working; gets reset to oxygen somehow after a Run
 
     def substrates_combobox_changed_cb(self,idx):
-        print("----- vis_tab.py: substrates_combobox_changed_cb: idx = ",idx)
+        # print("----- vis_tab.py: substrates_combobox_changed_cb: idx = ",idx)
         self.field_index = 4 + idx # substrate (0th -> 4 in the .mat)
         self.update_plots()
 
@@ -547,12 +547,12 @@ class Vis(QWidget):
         self.reset_model()
 
     def reset_model(self):
-        print("\n--------- vis_tab: reset_model ----------")
+        # print("\n--------- vis_tab: reset_model ----------")
         # Verify initial.xml and at least one .svg file exist. Obtain bounds from initial.xml
         # tree = ET.parse(self.output_dir + "/" + "initial.xml")
         xml_file = Path(self.output_dir, "initial.xml")
         if not os.path.isfile(xml_file):
-            print("vis_tab: Warning: Expecting initial.xml, but does not exist.")
+            print("vis_tab:reset_model(): Warning: Expecting initial.xml, but does not exist.")
             # msgBox = QMessageBox()
             # msgBox.setIcon(QMessageBox.Information)
             # msgBox.setText("Did not find 'initial.xml' in the output directory. Will plot a dummy substrate until you run a simulation.")
@@ -565,13 +565,14 @@ class Vis(QWidget):
 
         bds_str = xml_root.find(".//microenvironment//domain//mesh//bounding_box").text
         bds = bds_str.split()
-        print('bds=',bds)
+        # print('bds=',bds)
         self.xmin = float(bds[0])
         self.xmax = float(bds[3])
         print('reset_model(): self.xmin, xmax=',self.xmin, self.xmax)
         self.x_range = self.xmax - self.xmin
         self.plot_xmin = self.xmin
         self.plot_xmax = self.xmax
+        # print("--------- self.plot_xmax = ",self.plot_xmax)
 
         try:
             self.my_xmin.setText(str(self.plot_xmin))
@@ -584,23 +585,23 @@ class Vis(QWidget):
         self.ymin = float(bds[1])
         self.ymax = float(bds[4])
         self.y_range = self.ymax - self.ymin
-        print('reset_model(): self.ymin, ymax=',self.ymin, self.ymax)
+        # print('reset_model(): self.ymin, ymax=',self.ymin, self.ymax)
         self.plot_ymin = self.ymin
         self.plot_ymax = self.ymax
 
         xcoords_str = xml_root.find(".//microenvironment//domain//mesh//x_coordinates").text
         xcoords = xcoords_str.split()
-        print('reset_model(): xcoords=',xcoords)
-        print('reset_model(): len(xcoords)=',len(xcoords))
+        # print('reset_model(): xcoords=',xcoords)
+        # print('reset_model(): len(xcoords)=',len(xcoords))
         self.numx =  len(xcoords)
 
         ycoords_str = xml_root.find(".//microenvironment//domain//mesh//y_coordinates").text
         ycoords = ycoords_str.split()
-        print('reset_model(): ycoords=',ycoords)
-        print('reset_model(): len(ycoords)=',len(ycoords))
+        # print('reset_model(): ycoords=',ycoords)
+        # print('reset_model(): len(ycoords)=',len(ycoords))
         self.numy =  len(ycoords)
-        print("-------------- vis_tab.py -------------------")
-        print("reset_model(): self.numx, numy = ",self.numx,self.numy)
+        # print("-------------- vis_tab.py: reset_model() -------------------")
+        # print("reset_model(): self.numx, numy = ",self.numx,self.numy)
 
         #-------------------
         vars_uep = xml_root.find(".//microenvironment//domain//variables")
@@ -617,10 +618,10 @@ class Vis(QWidget):
                 # print(cell_def.attrib['name'])
                 if var.tag == 'variable':
                     substrate_name = var.attrib['name']
-                    print("substrate: ",substrate_name )
+                    # print("substrate: ",substrate_name )
                     sub_names.append(substrate_name)
                 self.substrates_combobox.clear()
-                print("sub_names = ",sub_names)
+                # print("sub_names = ",sub_names)
                 self.substrates_combobox.addItems(sub_names)
 
         self.cmin_value = 0.0
@@ -634,7 +635,7 @@ class Vis(QWidget):
 
 
     def reset_axes(self):
-        print("--------- vis_tab: reset_axes ----------")
+        # print("--------- vis_tab: reset_axes ----------")
         # Verify initial.xml and at least one .svg file exist. Obtain bounds from initial.xml
         # tree = ET.parse(self.output_dir + "/" + "initial.xml")
         xml_file = Path(self.output_dir, "initial.xml")
@@ -652,7 +653,7 @@ class Vis(QWidget):
 
         bds_str = xml_root.find(".//microenvironment//domain//mesh//bounding_box").text
         bds = bds_str.split()
-        print('bds=',bds)
+        # print('bds=',bds)
         self.xmin = float(bds[0])
         self.xmax = float(bds[3])
         self.x_range = self.xmax - self.xmin
@@ -1057,7 +1058,13 @@ class Vis(QWidget):
             # print("plot_vecs(): self.output_dir= ",self.output_dir)
             mcds = pyMCDS_cells(fname, self.output_dir)
             # print(mcds.get_cell_variables())
-            adhesion_radius = self.circle_radius - mcds.data['discrete_cells']['membrane_adhesion_dist'][0] 
+
+            # Note HACK: mcds.data['discrete_cells']['membrane_adhesion_dist'] returns an array of 
+            # all cells' values for membrane_adhesion_dist. We want to be sure to get the one for 
+            # cell type=epithelial. This is
+            # determined by tissue_setup. In this case, we create those cells *after* the "other" cell types, 
+            # so we want to grab the last cell's value here:
+            adhesion_radius = self.circle_radius - mcds.data['discrete_cells']['membrane_adhesion_dist'][-1] 
             # print("plot_event_horizon(): mcds.data['discrete_cells']['membrane_adhesion_dist']= ",mcds.data['discrete_cells']['membrane_adhesion_dist'])
             # print("plot_event_horizon(): adhesion_radius= ",adhesion_radius)
 
@@ -1123,7 +1130,7 @@ class Vis(QWidget):
         # print("-- plot_svg:", full_fname) 
         if not os.path.isfile(full_fname):
             # print("Once output files are generated, click the slider.")   
-            print("plot_svg(): ERROR:  filename not found.")   
+            print("plot_svg(): Warning: filename not found: ",full_fname)
             return
 
         # self.ax0.cla()
@@ -1255,7 +1262,7 @@ class Vis(QWidget):
                 # yval = (yval - self.svg_xmin)/self.svg_xrange * self.y_range + self.ymin
                 yval = yval/self.y_range * self.y_range + self.ymin
                 if (np.fabs(yval) > too_large_val):
-                    print("bogus xval=", xval)
+                    print("bogus yval=", yval)
                     break
 
                 rval = float(circle.attrib['r'])

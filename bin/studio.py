@@ -96,10 +96,12 @@ class PhysiCellXMLCreator(QWidget):
         self.absolute_data_dir = os.path.abspath(dataDirectory)
         print("-------- absolute_data_dir =",self.absolute_data_dir)
 
-        # NOTE: we set an env var here so in custom.cpp, it will also use it to read data (e.g., .csv)
-        os.environ['KIDNEY_DATA_PATH'] = self.absolute_data_dir
-        # dataDirectory = os.path.join(binDirectory,'..','config')
-        # dataDirectory = os.path.join('.','config')
+        # NOTE: if your C++ needs to also have an absolute path to data dir, do so via an env var
+        # os.environ['KIDNEY_DATA_PATH'] = self.absolute_data_dir
+
+        docDirectory = os.path.join(binDirectory,'..','doc')
+        self.absolute_doc_dir = os.path.abspath(docDirectory)
+        print("-------- absolute_doc_dir =",self.absolute_doc_dir)
 
         # read_file = model_name + ".xml"
         # read_file = os.path.join(dataDirectory, model_name + ".xml")
@@ -140,7 +142,7 @@ class PhysiCellXMLCreator(QWidget):
         # self.num_models = 0
         # self.model = {}  # key: name, value:[read-only, tree]
 
-        self.about_tab = About(self.nanohub_flag)
+        self.about_tab = About(self.absolute_doc_dir)
 
         self.config_tab = Config(self.nanohub_flag)
         self.config_tab.xml_root = self.xml_root

@@ -23,11 +23,11 @@ class QHLine(QFrame):
 
 
 class About(QWidget):
-    def __init__(self, nanohub_flag):
+    def __init__(self, doc_absolute_path):
         super().__init__()
         # global self.config_params
 
-        self.nanohub_flag = nanohub_flag
+        self.doc_absolute_path = doc_absolute_path
 
         # self.tab = QWidget()
         # self.tabs.resize(200,5)
@@ -56,11 +56,13 @@ class About(QWidget):
         # # html_file = Path(doc_dir,"about.html")
         # html_file = Path("doc","about.html")
         # print(html_file)
-        f = QtCore.QFile("doc/about.html")
+        fname = os.path.join(self.doc_absolute_path,"about.html")
+        # f = QtCore.QFile("doc/about.html")
+        f = QtCore.QFile(fname)
         # f = QtCore.QFile("html_file")
         f.open(QtCore.QFile.ReadOnly|QtCore.QFile.Text)
-        print("\n\n------------------- about_tab.py:  f.isOpen() = ",f.isOpen())
-        print("------------------- \n\n")
+        # print("\n\n------------------- about_tab.py:  f.isOpen() = ",f.isOpen())
+        # print("------------------- \n\n")
         istream = QtCore.QTextStream(f)
         self.text.setHtml(istream.readAll())
         f.close()

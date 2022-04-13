@@ -192,6 +192,8 @@ class RunModel(QWidget):
         if self.vis_tab:
             # self.vis_tab.reset_axes()
             self.vis_tab.reset_model_flag = True
+            self.vis_tab.reset_plot_range()
+            self.vis_tab.init_plot_range(self.config_tab) # heaven help the person who needs to understand this
 
         # for f in Path('./output').glob('*.*'):
         #     try:

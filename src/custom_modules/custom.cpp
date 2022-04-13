@@ -163,6 +163,9 @@ void setup_tissue( void )
 	int num_cell_chunks = parameters.ints("num_cell_chunks");
 	int num_subcell_layers = parameters.ints("num_subcell_layers");
 	double R_circle = parameters.doubles("R_circle");
+	double xctr_circle = 0.0;
+	double yctr_circle = R_circle;
+
 	// double R_in = parameters.doubles("R_in");
 	double theta_start = parameters.doubles("theta_start");
 	double twopi_val = 6.283185;
@@ -170,10 +173,7 @@ void setup_tissue( void )
 	double theta_stop = parameters.doubles("theta_stop");
 	theta_stop = theta_stop * twopi_val / 360.;  // radians
 
-
 	double circum = twopi_val * R_circle ;
-
-
 
 	// ----------- create hex-blobs "other" cell types away from the membrane 
 	double cell_radius = pCD_other->phenotype.geometry.radius;
@@ -193,6 +193,13 @@ void setup_tissue( void )
 	{
 		double xv = xctr[idx];
 		double yv = yctr[idx];
+		double xd = xv - xctr_circle;
+		double yd = yv - yctr_circle;
+		double d = sqrt(xd*xd + yd*yd);
+		if (d > R_circle) // if the blob's center cell is outside the big circle, skip.
+		{
+			continue;
+		}
 		Cell* pCell = create_cell( *pCD_other ); 
 		pCell->assign_position( xv,yv, 0.0 ); 
 		pCell->custom_data[nCellID] = blob_id + idx; 

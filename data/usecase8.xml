@@ -12,7 +12,7 @@
 		<use_2D>true</use_2D>
 	</domain>
 	<overall>
-		<max_time units="min">90</max_time>
+		<max_time units="min">120</max_time>
 		<time_units>min</time_units>
 		<space_units>micron</space_units>
 		<dt_diffusion units="min">0.01</dt_diffusion>
@@ -57,7 +57,7 @@
         </Dirichlet_options>
         </variable>
 
-		<options>
+      <options>
 			<calculate_gradients>true</calculate_gradients>
 			<track_internalized_substrates_in_each_agent>true</track_internalized_substrates_in_each_agent>
 			<initial_condition enabled="false" type="matlab">
@@ -161,7 +161,7 @@
           </phenotype>
         <custom_data>
           <relative_adhesion_other_cells units="" description="Adhesion between 2 cells">0</relative_adhesion_other_cells>
-          <rel_max_membrane_adhesion_dist units="" description="Event horizon distance factor">3</rel_max_membrane_adhesion_dist>
+          <rel_max_membrane_adhesion_dist units="" description="Event horizon distance factor">1.5</rel_max_membrane_adhesion_dist>
           <attach_lifetime units="min" description="Duration for a cell being attached to membrane">1.0</attach_lifetime>
           <subcell_adhesion_factor units="" description="Multiplication factor for subcell adhesion">1.5</subcell_adhesion_factor>
           <subcell_repulsion_factor units="" description="Multiplication factor for subcell repulsion">1</subcell_repulsion_factor>
@@ -177,7 +177,7 @@
         </custom_data>
           </cell_definition>
 
-		<cell_definition name="other" ID="1">
+      <cell_definition name="other" ID="1">
         <phenotype>
           <cycle code="6" name="Flow cytometry model (separated)">
             <phase_durations units="min">
@@ -284,8 +284,8 @@
           <membrane_adhesion_dist units="" description="(internal use only)">12</membrane_adhesion_dist>
         </custom_data>
           </cell_definition>
-	</cell_definitions>
 
+      </cell_definitions>
 	<initial_conditions>
 		<cell_positions enabled="true" type="csv">
 			<folder>../data</folder>
@@ -294,12 +294,12 @@
 	</initial_conditions>
 	<user_parameters>
 		<num_cell_chunks type="int" units="" description="# of (large) cells">3</num_cell_chunks>
-		<num_subcell_layers type="int" units="" description="# of layers of subcells">2</num_subcell_layers>
-		<R_circle type="double" units="micron" description="circle radius (for membrane)">300</R_circle>
-		<theta_start type="double" units="degrees" description="start of membrane arc">240</theta_start>
-		<theta_stop type="double" units="degrees" description="start of membrane arc">300</theta_stop>
-		<mechanics_voxel_size type="double" units="micron" description="edge length of mechanics voxel. Set ~2 x agent radius x max relative interaction distance (default: 30)">30</mechanics_voxel_size>
-		<unit_test type="int" units="" description="0,1, or 2">0</unit_test>
-		<random_seed type="int" units="dimensionless" description="">0</random_seed>
-	</user_parameters>
+        <num_subcell_layers type="int" units="" description="# of layers of subcells">2</num_subcell_layers>
+        <R_circle type="double" units="micron" description="circle radius (for membrane)">600</R_circle>
+        <theta_start type="double" units="degrees" description="start of membrane arc">240</theta_start>
+        <theta_stop type="double" units="degrees" description="start of membrane arc">300</theta_stop>
+        <mechanics_voxel_size type="double" units="micron" description="edge length of mechanics voxel. Set ~2 x agent radius x max relative interaction distance (default: 30)">30</mechanics_voxel_size>
+        <unit_test type="int" units="" description="0,1, or 2">0</unit_test>
+        <random_seed type="int" units="dimensionless" description="">0</random_seed>
+    </user_parameters>
 </PhysiCell_settings>
