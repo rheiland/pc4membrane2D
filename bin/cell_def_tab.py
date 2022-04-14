@@ -44,8 +44,12 @@ class CellDef(QWidget):
         self.idx_current_cell_def = 1    # 1-offset for XML (ElementTree, ET)
         self.xml_root = None
         self.debug_print_fill_xml = True
+
         self.custom_data_count = 0
+        self.max_custom_data_rows = 14
         self.max_custom_data_rows = 99
+        self.max_custom_data_rows = 20
+
         self.max_entries = self.max_custom_data_rows
         self.master_custom_varname = []
         # self.custom_data_units_width = 90
@@ -2698,6 +2702,10 @@ class CellDef(QWidget):
         # print(self.param_d[self.current_cell_def]['custom_data'])
 
     #--------------------------------------------------------
+    def add_more_custom_data_tab(self):
+        return
+
+    #--------------------------------------------------------
     def create_custom_data_tab(self):
         custom_data_tab = QWidget()
         glayout = QGridLayout()
@@ -4778,9 +4786,15 @@ class CellDef(QWidget):
                 #     print("tag=",var.tag)
                 #     self.custom_data_value[jdx].setText(var.text)
 
-                #     if 'units' in var.keys():
-                #         self.custom_data_units[jdx].setText(var.attrib['units'])
-                #     jdx += 1
+                        # print('keys=',var.keys())
+                        if 'units' in var.keys():
+                            self.custom_data_units[jdx].setText(var.attrib['units'])
+                        if 'description' in var.keys():
+                            # print("----- found description: ",var.attrib['description'])
+                            self.custom_data_description[jdx].setText(var.attrib['description'])
+                        jdx += 1
+                        if jdx > self.max_custom_data_rows:
+                            print("-------- adding 5 more rows in custom data")
 
                     # print("--------- populate_tree: self.param_d[cell_def_name]['custom_data'] = ",self.param_d[cell_def_name]['custom_data'])
 

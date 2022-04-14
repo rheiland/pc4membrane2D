@@ -299,7 +299,6 @@
 		<theta_start type="double" units="degrees" description="start of membrane arc">240</theta_start>
 		<theta_stop type="double" units="degrees" description="start of membrane arc">300</theta_stop>
 		<mechanics_voxel_size type="double" units="micron" description="edge length of mechanics voxel. Set ~2 x agent radius x max relative interaction distance (default: 30)">30</mechanics_voxel_size>
-		<unit_test type="int" units="" description="0,1, or 2">0</unit_test>
 		<random_seed type="int" units="dimensionless" description="">0</random_seed>
 	</user_parameters>
 </PhysiCell_settings>

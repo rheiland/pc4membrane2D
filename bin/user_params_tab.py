@@ -27,7 +27,8 @@ class UserParams(QtWidgets.QWidget):
         # self.current_param = None
         self.xml_root = None
         self.count = 0
-        self.max_rows = 100  # initially
+        self.max_rows = 99  # initially
+        self.max_rows = 7  
 
         #-------------------------------------------
         self.label_width = 150
