@@ -60,7 +60,7 @@ class PhysiCellXMLCreator(QWidget):
         if( 'HOME' in os.environ.keys() ):
             self.nanohub_flag = "home/nanohub" in os.environ['HOME']
 
-        self.p = None
+        self.p = None # Necessary to download files!
 
         # self.title_prefix = "PhysiCell Studio: "
         self.title_prefix = "pc4membrane2D: "
@@ -263,12 +263,15 @@ class PhysiCellXMLCreator(QWidget):
         file_menu.addAction("Toggle vectors", self.toggle_vectors)
         file_menu.addAction("Toggle event horizon", self.toggle_event_horizon)
 
-        self.download_menu = file_menu.addMenu('Download')
-        self.download_config_item = self.download_menu.addAction("Download config.xml", self.download_config_cb)
-        self.download_svg_item = self.download_menu.addAction("Download SVG", self.download_svg_cb)
-        self.download_mat_item = self.download_menu.addAction("Download binary (.mat) data", self.download_full_cb)
-        # self.download_menu_item.setEnabled(False)
-        self.download_menu.setEnabled(False)
+        if self.nanohub_flag:
+            self.download_menu = file_menu.addMenu('Download')
+            self.download_config_item = self.download_menu.addAction("Download config.xml", self.download_config_cb)
+            self.download_svg_item = self.download_menu.addAction("Download SVG", self.download_svg_cb)
+            self.download_mat_item = self.download_menu.addAction("Download binary (.mat) data", self.download_full_cb)
+            # self.download_menu_item.setEnabled(False)
+            self.download_menu.setEnabled(False)
+        else:
+            self.download_menu = None
 
         menubar.adjustSize()  # Argh. Otherwise, only 1st menu appears, with ">>" to others!
 
