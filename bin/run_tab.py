@@ -264,5 +264,6 @@ class RunModel(QWidget):
         self.message("Process finished.")
         print("-- process finished.")
         self.vis_tab.first_plot_cb("foo")
-        self.download_menu.setEnabled(True)
+        if self.nanohub_flag:
+            self.download_menu.setEnabled(True)
         self.p = None
