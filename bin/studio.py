@@ -227,6 +227,7 @@ class PhysiCellXMLCreator(QWidget):
             self.tabWidget.addTab(self.vis_tab,"Plot")
             # self.tabWidget.setTabEnabled(5, False)
             self.enablePlotTab(False)
+            self.enableMicroenvTab(False)
 
             self.run_tab.vis_tab = self.vis_tab
             print("studio.py: calling vis_tab.substrates_cbox_changed_cb(2)")
@@ -249,6 +250,8 @@ class PhysiCellXMLCreator(QWidget):
 
     def enablePlotTab(self, bval):
         self.tabWidget.setTabEnabled(6, bval)
+    def enableMicroenvTab(self, bval):
+        self.tabWidget.setTabEnabled(2, bval)
 
     def menu(self):
         menubar = QMenuBar(self)
@@ -394,7 +397,8 @@ class PhysiCellXMLCreator(QWidget):
         self.enablePlotTab(False)
         self.tabWidget.setCurrentIndex(0)  # Config (default)
 
-        self.download_menu.setEnabled(False)
+        if self.nanohub_flag:
+            self.download_menu.setEnabled(False)
 
 
     # def show_sample_model(self):

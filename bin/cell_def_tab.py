@@ -2210,10 +2210,14 @@ class CellDef(QWidget):
         glayout.addWidget(label, idr,0, 1,1) # w, row, column, rowspan, colspan
 
         self.chemotaxis_enabled = QCheckBox("enabled")
-        self.chemotaxis_enabled.clicked.connect(self.chemotaxis_enabled_cb)
+        # self.chemotaxis_enabled.clicked.connect(self.chemotaxis_enabled_cb)
+        # temporary for this app, since no substrates, hence no chemotaxis
+        self.chemotaxis_enabled.setEnabled(False)
         glayout.addWidget(self.chemotaxis_enabled, idr,1, 1,1) # w, row, column, rowspan, colspan
 
         self.motility_substrate_dropdown = QComboBox()
+        # temporary for this app, since no substrates, hence no chemotaxis
+        self.motility_substrate_dropdown.setEnabled(False)
         # self.motility_substrate_dropdown.setFixedWidth(240)
         idr += 1
         glayout.addWidget(self.motility_substrate_dropdown, idr,0, 1,1) # w, row, column, rowspan, colspan
@@ -2224,11 +2228,15 @@ class CellDef(QWidget):
         # glayout.addWidget(self.chemotaxis_direction_positive, idr,1, 1,1) # w, row, column, rowspan, colspan
 
         self.chemotaxis_direction_towards = QRadioButton("towards")
-        self.chemotaxis_direction_towards.clicked.connect(self.chemotaxis_direction_cb)
+        # self.chemotaxis_direction_towards.clicked.connect(self.chemotaxis_direction_cb)
+        # temporary for this app, since no substrates, hence no chemotaxis
+        self.chemotaxis_direction_towards.setEnabled(False)
         # glayout.addLayout(self.chemotaxis_direction_towards, idr,1, 1,1) # w, row, column, rowspan, colspan
 
         self.chemotaxis_direction_against = QRadioButton("against")
-        self.chemotaxis_direction_against.clicked.connect(self.chemotaxis_direction_cb)
+        # self.chemotaxis_direction_against.clicked.connect(self.chemotaxis_direction_cb)
+        # temporary for this app, since no substrates, hence no chemotaxis
+        self.chemotaxis_direction_against.setEnabled(False)
         # glayout.addWidget(self.chemotaxis_direction_against, idr,2, 1,1) # w, row, column, rowspan, colspan
 
         hbox = QHBoxLayout()

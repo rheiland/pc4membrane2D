@@ -1,7 +1,7 @@
 <h2><strong>GUI Overview</strong></h2>
 <ul>
 <li><b>Config Basics</b> tab: input parameters common to all models (e.g., domain grid, simulation time, choice/frequency of outputs)</li>
-<li><b>Microenvironment</b> tab:&nbsp;&nbsp; microenvironment parameters (for substrates and signals)</li>
+<li><b>Microenvironment</b> tab:&nbsp;&nbsp; microenvironment parameters (for substrates and signals) - disabled for this app</li>
 <li><b>Cell Types</b> tab:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parameters that are relevant to different cell types. (Note the subtabs used to define the phenotype and custom data parameter values)</li>
 <li><b>User Params</b> tab:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user parameters </li>
 <li><b>Run</b> tab:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; run the simulation (see terminal output)</li>
@@ -14,13 +14,17 @@ When a simulation begins, the Plot tab becomes enabled where output results can 
 
 <p>
 This application demonstrates (sub)cell mechanics near a membrane. For simplicity, we define
-a circular arc as a membrane. Membranes play a critical role in maintaining homeostasis in organisms. For example, skin (the largest organ in humans) consists of ...
+a circular arc as a membrane. Membranes play a critical role in maintaining homeostasis 
+in organisms. For example, skin (the largest organ in humans) consists of an epithelial membrane
+(also called the cutaneous membrane).
 
+<!--
 (rf. <a href="https://hubmapconsortium.github.io/ccf-asct-reporter/vis?selectedOrgans=skin-v1.1&playground=false"  target="_blank">HuBMAP ASCT+B table for skin</a>)
+-->
 </p>
 
 <p>
-<img src="doc/fig_ICs.png" >
+<img src="bin/fig_ICs.png">
 
 <p>
 The membrane (circular arc) and cells' initial conditions are defined via User Params.
@@ -31,18 +35,23 @@ The membrane (circular arc) and cells' initial conditions are defined via User P
 Coming...
 
 <h2><strong>Sample test parameters</strong></h2>
+After each test case, Run a simulation, then Plot results. Optional: File -> "Plot event horizon"
+to see this region.
 <ul>
 <li>default:</li>
 File->Reset
 
 <li>test 1:</li>
-File->Reset, tab|subtab|param=42
-
-<li>test 2:</li>
 File->Reset, User Params:num_subcell_layers=3, R_circle=300
 
-<li>test 3:</li>
+<li>test 2:</li>
 File->Reset, User Params:num_subcell_layers=3, R_circle=500
+
+<li>test 3:</li>
+File->Reset, User Params:num_cell_chunks=5, num_subcell_layers=6, R_circle=300
+
+<li>test 4:</li>
+File->Reset, Cell Types:"epithelial" cell type selected(left column), Volume(subtab) total=50
 </ul>
 
 <h3><strong>About the software</strong></h3> 
