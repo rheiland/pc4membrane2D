@@ -228,6 +228,7 @@ class Config(QWidget):
         hbox.addWidget(label)
 
         self.folder = QLineEdit()
+        self.folder.setEnabled(False)
         self.folder.setFixedWidth(domain_value_width)
         # self.folder.setValidator(QtGui.QTex())
         if self.nanohub_flag:
@@ -317,7 +318,7 @@ class Config(QWidget):
         label = QLabel(" ")
         label.setFixedWidth(200)
         hbox.addWidget(label)
-        self.vbox.addLayout(hbox)
+        # self.vbox.addLayout(hbox)
         #----------
         hbox = QHBoxLayout()
         label = QLabel("dt_phenotype")
@@ -336,7 +337,7 @@ class Config(QWidget):
         label = QLabel(" ")
         label.setFixedWidth(200)
         hbox.addWidget(label)
-        self.vbox.addLayout(hbox)
+        # self.vbox.addLayout(hbox)
 
         #============  Cells IC ================================
         label = QLabel("Initial conditions of cells (x,y,z, type)")
@@ -410,8 +411,8 @@ class Config(QWidget):
 
         self.folder.setText(self.xml_root.find(".//folder").text)
 
-        self.dt_mechanics_w.setText(self.xml_root.find(".//dt_mechanics").text)
-        self.dt_phenotype_w.setText(self.xml_root.find(".//dt_phenotype").text)
+        # self.dt_mechanics_w.setText(self.xml_root.find(".//dt_mechanics").text)
+        # self.dt_phenotype_w.setText(self.xml_root.find(".//dt_phenotype").text)
         
         self.svg_interval.setText(self.xml_root.find(".//SVG//interval").text)
         # NOTE: do this *after* filling the mcds_interval, directly above, due to the callback/constraints on them??
@@ -507,8 +508,8 @@ class Config(QWidget):
         self.xml_root.find(".//omp_num_threads").text = self.num_threads.text()
         self.xml_root.find(".//folder").text = self.folder.text()
 
-        self.xml_root.find(".//dt_mechanics").text = self.dt_mechanics_w.text()
-        self.xml_root.find(".//dt_phenotype").text = self.dt_phenotype_w.text()
+        # self.xml_root.find(".//dt_mechanics").text = self.dt_mechanics_w.text()
+        # self.xml_root.find(".//dt_phenotype").text = self.dt_phenotype_w.text()
 
         if self.save_svg.isChecked():
             self.xml_root.find(".//SVG//enable").text = 'true'
