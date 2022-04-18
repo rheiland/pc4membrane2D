@@ -259,6 +259,7 @@ class RunModel(QWidget):
         }
         state_name = states[state]
         self.message(f"State changed: {state_name}")
+        # self.message(f"Starting in a few secs...")   # only for "Starting"
 
     def process_finished(self):
         self.message("Process finished.")
