@@ -1,0 +1,61 @@
+<html>
+<h2><strong>GUI Overview</strong></h2>
+<ul>
+<li><b>Config Basics</b> tab: input parameters common to all models (e.g., domain grid, simulation time, choice/frequency of outputs)</li>
+<li><b>Microenvironment</b> tab:&nbsp;&nbsp; microenvironment parameters (for substrates and signals)</li>
+<li><b>Cell Types</b> tab:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parameters that are relevant to different cell types. (Note the subtabs used to define the phenotype and custom data parameter values)</li>
+<li><b>User Params</b> tab:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; user parameters </li>
+<li><b>Run</b> tab:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; run the simulation (see terminal output)</li>
+<li><b>Plot</b> tab:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; display output results (enabled after a Run)</li>
+</ul>
+Clicking the 'Run Simulation' button in the Run tab will use the specified parameters and start a simulation. 
+When a simulation begins, the Plot tab becomes enabled where output results can be visualized.
+
+<h2><strong>Introduction</strong></h2>
+
+<p>
+This application demonstrates (sub)cell mechanics near a membrane. For simplicity, we define
+a circular arc as a membrane. Membranes play a critical role in maintaining homeostasis in organisms. For example, skin (the largest organ in humans) consists of ...
+
+(rf. <a href="https://hubmapconsortium.github.io/ccf-asct-reporter/vis?selectedOrgans=skin-v1.1&playground=false"  target="_blank">HuBMAP ASCT+B table for skin</a>)
+</p>
+
+<p>
+<img src="doc/fig_ICs.png" >
+
+<p>
+The membrane (circular arc) and cells' initial conditions are defined via User Params.
+</p>
+
+<h2><strong> Details </strong> </h2>
+<p>
+Coming...
+
+<h2><strong>Sample test parameters</strong></h2>
+<ul>
+<li>default:</li>
+File->Reset
+
+<li>test 1:</li>
+File->Reset, tab|subtab|param=42
+
+<li>test 2:</li>
+File->Reset, User Params:num_subcell_layers=3, R_circle=300
+
+<li>test 3:</li>
+File->Reset, User Params:num_subcell_layers=3, R_circle=500
+</ul>
+
+<h3><strong>About the software</strong></h3> 
+<p>
+This model and cloud-hosted demo are part of the education and outreach activities for
+the HuBMAP project (NIH Common Fund, OT2-OD026671-01), 
+the IU Engineered nanoBIO Node (National Science Foundation, 720625),
+and a cancer systems biology grant (National Cancer Institute, U01CA232137).
+
+The models are built using PhysiCell: a C++ framework for multicellular systems biology [1].
+<ol>
+<li>
+<a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005991" target="_blank" >A. Ghaffarizadeh, R. Heiland, S.H. Friedman, S.M. Mumenthaler, and P. Macklin. PhysiCell: an open source physics-based cell simulator for 3-D multicellular systems. PLoS Comput. Biol. 14(2):e1005991, 2018. DOI: 10.1371/journal.pcbi.1005991.</a> </li>
+</ol>
+</html>
