@@ -142,7 +142,7 @@ class PhysiCellXMLCreator(QWidget):
         # self.num_models = 0
         # self.model = {}  # key: name, value:[read-only, tree]
 
-        self.about_tab = About(self.absolute_doc_dir)
+        self.about_tab = About(self.absolute_doc_dir,self.nanohub_flag)
 
         self.config_tab = Config(self.nanohub_flag)
         self.config_tab.xml_root = self.xml_root

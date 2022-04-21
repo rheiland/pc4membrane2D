@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QFrame,QApplication,QWidget,QTabWidget,QFormLayout,Q
 
 
 class About(QWidget):
-    def __init__(self, doc_absolute_path):
+    def __init__(self, doc_absolute_path, nanohub_flag):
         super().__init__()
 
         self.doc_absolute_path = doc_absolute_path
@@ -23,9 +23,12 @@ class About(QWidget):
         # self.text = QTextEdit()
         self.text = QTextBrowser()
         self.text.setHtml("&nbsp;")
-#       self.text.setOpenExternalLinks(False)
-        self.text.setOpenLinks(False)
-        self.text.anchorClicked.connect(self.followLink)
+        if nanohub_flag:
+            self.text.setOpenLinks(False)
+            self.text.anchorClicked.connect(self.followLink)
+        else:
+            self.text.setOpenExternalLinks(True)
+            # self.text.setOpenLinks(True)
 
         fname = os.path.join(self.doc_absolute_path,"about.html")
         f = QtCore.QFile(fname)
