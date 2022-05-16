@@ -258,7 +258,8 @@ class PhysiCellXMLCreator(QWidget):
         menubar.setNativeMenuBar(False)
 
         #--------------
-        file_menu = menubar.addMenu('&File')
+        # file_menu = menubar.addMenu('&File')
+        file_menu = menubar.addMenu('&Options')
 
         file_menu.addAction("Reset", self.reset_xml_root)
 

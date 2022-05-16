@@ -151,7 +151,7 @@ void setup_tissue( void )
 
 
 	Cell_Definition* pCD = cell_definitions_by_name["epithelial"]; 
-	Cell_Definition* pCD_other = cell_definitions_by_name["other"]; 
+	// Cell_Definition* pCD_other = cell_definitions_by_name["other"]; 
 
 	int membrane_adhesion_dist_i = pCD->custom_data.find_variable_index("membrane_adhesion_dist");
 	int rel_max_membrane_adhesion_dist_i = pCD->custom_data.find_variable_index("rel_max_membrane_adhesion_dist");
@@ -176,43 +176,43 @@ void setup_tissue( void )
 	double circum = twopi_val * R_circle ;
 
 	// ----------- create hex-blobs "other" cell types away from the membrane 
-	double cell_radius = pCD_other->phenotype.geometry.radius;
-    std::cout << "cell_radius of pCD_other = " << cell_radius << std::endl;
-	double cell_diam = 2.0 * cell_radius;
-	double rval = cell_diam;
-	int ncells_circle = circum / cell_diam;
+	// double cell_radius = pCD_other->phenotype.geometry.radius;
+    // std::cout << "cell_radius of pCD_other = " << cell_radius << std::endl;
+	// double cell_diam = 2.0 * cell_radius;
+	// double rval = cell_diam;
+	// int ncells_circle = circum / cell_diam;
 
-	double blob_delta = twopi_val / 6.0;
-	double zv = 0.0;
-	// std::cout << xctr << ", " << yctr << ", " << zv << ""
+	// double blob_delta = twopi_val / 6.0;
+	// double zv = 0.0;
+	// // std::cout << xctr << ", " << yctr << ", " << zv << ""
 
-	std::vector<double> xctr = {-100, 50, -50, 120, 0};
-	std::vector<double> yctr = { 100,150, 80, 120, 180};
-	int blob_id = 200;
-	for (int idx=0; idx < xctr.size(); idx++)
-	{
-		double xv = xctr[idx];
-		double yv = yctr[idx];
-		double xd = xv - xctr_circle;
-		double yd = yv - yctr_circle;
-		double d = sqrt(xd*xd + yd*yd);
-		if (d > R_circle) // if the blob's center cell is outside the big circle, skip.
-		{
-			continue;
-		}
-		Cell* pCell = create_cell( *pCD_other ); 
-		pCell->assign_position( xv,yv, 0.0 ); 
-		pCell->custom_data[nCellID] = blob_id + idx; 
-		for (double tval=0; tval <= twopi_val; tval+=blob_delta)
-		{
-			double xv = xctr[idx] + rval * std::cos(tval);
-			double yv = yctr[idx] + rval * std::sin(tval);
+	// std::vector<double> xctr = {-100, 50, -50, 120, 0};
+	// std::vector<double> yctr = { 100,150, 80, 120, 180};
+	// int blob_id = 200;
+	// for (int idx=0; idx < xctr.size(); idx++)
+	// {
+	// 	double xv = xctr[idx];
+	// 	double yv = yctr[idx];
+	// 	double xd = xv - xctr_circle;
+	// 	double yd = yv - yctr_circle;
+	// 	double d = sqrt(xd*xd + yd*yd);
+	// 	if (d > R_circle) // if the blob's center cell is outside the big circle, skip.
+	// 	{
+	// 		continue;
+	// 	}
+	// 	Cell* pCell = create_cell( *pCD_other ); 
+	// 	pCell->assign_position( xv,yv, 0.0 ); 
+	// 	pCell->custom_data[nCellID] = blob_id + idx; 
+	// 	for (double tval=0; tval <= twopi_val; tval+=blob_delta)
+	// 	{
+	// 		double xv = xctr[idx] + rval * std::cos(tval);
+	// 		double yv = yctr[idx] + rval * std::sin(tval);
 
-			Cell* pCell = create_cell( *pCD_other ); 
-			pCell->assign_position( xv,yv, 0.0 ); 
-			pCell->custom_data[nCellID] = blob_id + idx; 
-		}
-	}
+	// 		Cell* pCell = create_cell( *pCD_other ); 
+	// 		pCell->assign_position( xv,yv, 0.0 ); 
+	// 		pCell->custom_data[nCellID] = blob_id + idx; 
+	// 	}
+	// }
 
 
 	// ----------- create a band of cells near membrane
@@ -232,11 +232,11 @@ void setup_tissue( void )
 	// 	pC->custom_data[nCellID] = float(my_ID); 
 	// }
 
-	cell_radius = pCD->phenotype.geometry.radius;
+	double cell_radius = pCD->phenotype.geometry.radius;
     std::cout << "cell_radius of pCD = " << cell_radius << std::endl;
-	cell_diam = 2.0 * cell_radius;
-	rval = cell_diam;
-	ncells_circle = circum / cell_diam;
+	double cell_diam = 2.0 * cell_radius;
+	double rval = cell_diam;
+	int ncells_circle = circum / cell_diam;
 
 	for (int nlayer=0; nlayer < num_subcell_layers; nlayer++)
 	{
